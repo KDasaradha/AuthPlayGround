@@ -78,8 +78,6 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
-
-    // Generate TOTP
     const otp = generateTOTPSecret()
     const expiresAt = new Date(Date.now() + TOTP_TIME_STEP)
     const token = randomBytes(32).toString('hex')

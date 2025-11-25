@@ -9,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { 
-  FileText, 
-  Check, 
-  X, 
-  Users, 
-  User, 
-  Shield, 
+import {
+  FileText,
+  Check,
+  X,
+  Users,
+  User,
+  Shield,
   Key,
   UserPlus,
   UserCheck,
@@ -206,7 +206,7 @@ export default function PermissionBasedPage() {
 
   const handleCreatePermission = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/permission-based/permission", {
         method: "POST",
@@ -219,9 +219,9 @@ export default function PermissionBasedPage() {
           action: newPermissionAction
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         const newPermission: Permission = {
           id: data.permission.id,
@@ -261,7 +261,7 @@ export default function PermissionBasedPage() {
 
   const handleGrantPermission = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/permission-based/grant", {
         method: "POST",
@@ -272,9 +272,9 @@ export default function PermissionBasedPage() {
           expiresAt: expiryDate || null
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         const newUserPermission: UserPermission = {
           userId: selectedUserForPermission,
@@ -311,16 +311,16 @@ export default function PermissionBasedPage() {
 
   const handleRevokePermission = async (userId: string, permissionId: string) => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/permission-based/revoke", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, permissionId })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setUserPermissions(userPermissions.filter(
           up => !(up.userId === userId && up.permissionId === permissionId)
@@ -349,16 +349,16 @@ export default function PermissionBasedPage() {
 
   const handleCheckPermission = async (userId: string, permissionId: string) => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/permission-based/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, permissionId })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         toast({
           title: "Permission Check",
@@ -405,7 +405,7 @@ export default function PermissionBasedPage() {
   const permissionsByCategory = getPermissionsByCategory()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex justify-center items-center gap-3 mb-4">
@@ -437,7 +437,7 @@ export default function PermissionBasedPage() {
                     <TabsTrigger value="users">Users</TabsTrigger>
                     <TabsTrigger value="check">Check</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="permissions" className="space-y-4">
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -451,7 +451,7 @@ export default function PermissionBasedPage() {
                           Create Permission
                         </Button>
                       </div>
-                      
+
                       {Object.entries(permissionsByCategory).map(([category, categoryPermissions]) => (
                         <div key={category} className="space-y-2">
                           <h4 className="font-medium text-gray-700">{category}</h4>
@@ -482,11 +482,11 @@ export default function PermissionBasedPage() {
                       ))}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="assign" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Grant Permission</h3>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label>Select User</Label>
@@ -503,7 +503,7 @@ export default function PermissionBasedPage() {
                             ))}
                           </select>
                         </div>
-                        
+
                         <div>
                           <Label>Select Permission</Label>
                           <select
@@ -520,7 +520,7 @@ export default function PermissionBasedPage() {
                           </select>
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label>Expiry Date (Optional)</Label>
                         <Input
@@ -529,8 +529,8 @@ export default function PermissionBasedPage() {
                           onChange={(e) => setExpiryDate(e.target.value)}
                         />
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={handleGrantPermission}
                         disabled={isProcessing || !selectedUserForPermission || !selectedPermissionForUser}
                         className="w-full"
@@ -549,7 +549,7 @@ export default function PermissionBasedPage() {
                       </Button>
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="users" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">User Permissions</h3>
@@ -576,7 +576,7 @@ export default function PermissionBasedPage() {
                                     <Badge variant="outline">{userPerms.length} permissions</Badge>
                                   </div>
                                 </div>
-                                
+
                                 {userPerms.length > 0 && (
                                   <div className="space-y-2">
                                     {userPerms.map((userPerm) => {
@@ -611,11 +611,11 @@ export default function PermissionBasedPage() {
                       </div>
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="check" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Check Permission</h3>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label>Select User</Label>
@@ -632,7 +632,7 @@ export default function PermissionBasedPage() {
                             ))}
                           </select>
                         </div>
-                        
+
                         <div>
                           <Label>Select Permission</Label>
                           <select
@@ -649,8 +649,8 @@ export default function PermissionBasedPage() {
                           </select>
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={() => selectedUser && selectedPermission && handleCheckPermission(selectedUser.id, selectedPermission.id)}
                         disabled={isProcessing || !selectedUser || !selectedPermission}
                         className="w-full"
@@ -692,7 +692,7 @@ export default function PermissionBasedPage() {
                       <p className="text-sm text-gray-600">Individual permission assignment</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -700,7 +700,7 @@ export default function PermissionBasedPage() {
                       <p className="text-sm text-gray-600">Custom permission combinations</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -708,7 +708,7 @@ export default function PermissionBasedPage() {
                       <p className="text-sm text-gray-600">Time-bound permissions</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -772,14 +772,14 @@ export default function PermissionBasedPage() {
                       Principle of least privilege enforced
                     </AlertDescription>
                   </Alert>
-                  
+
                   <Alert>
                     <Lock className="h-4 w-4" />
                     <AlertDescription>
                       No implicit permissions - everything is explicit
                     </AlertDescription>
                   </Alert>
-                  
+
                   <Alert>
                     <Lock className="h-4 w-4" />
                     <AlertDescription>

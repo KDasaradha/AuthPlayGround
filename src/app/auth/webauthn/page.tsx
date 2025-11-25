@@ -9,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Fingerprint, 
-  Check, 
-  X, 
-  Key, 
-  Shield, 
-  Smartphone, 
+import {
+  Fingerprint,
+  Check,
+  X,
+  Key,
+  Shield,
+  Smartphone,
   Laptop,
   Usb,
   RefreshCw,
@@ -45,21 +45,8 @@ export default function WebAuthnPage() {
   const [authenticatorType, setAuthenticatorType] = useState("platform")
   const [userVerification, setUserVerification] = useState("required")
   const [residentKey, setResidentKey] = useState("preferred")
-  interface Credential {
-    id: string
-    type: string
-    created: string
-  }
-
-  const [registeredCredentials, setRegisteredCredentials] = useState<Credential[]>([])
-  interface AuthenticatorInfo {
-    type: string
-    backupEligible: boolean
-    transports: string[]
-    userVerified: boolean
-  }
-
-  const [authenticatorInfo, setAuthenticatorInfo] = useState<AuthenticatorInfo | null>(null)
+  const [registeredCredentials, setRegisteredCredentials] = useState<Array<{ id: string; type: string; created: string }>>([])
+  const [authenticatorInfo, setAuthenticatorInfo] = useState<{ type: string; backupEligible: boolean; transports?: string[]; userVerified: boolean } | null>(null)
   const { toast } = useToast()
 
   const authenticatorTypes = [
@@ -81,7 +68,7 @@ export default function WebAuthnPage() {
 
   const handleRegister = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/webauthn/register", {
         method: "POST",
@@ -94,9 +81,9 @@ export default function WebAuthnPage() {
           residentKey
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setChallenge(data.challenge)
         setCredentialId(data.credentialId)
@@ -131,7 +118,7 @@ export default function WebAuthnPage() {
 
   const handleAuthenticate = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/webauthn/authenticate", {
         method: "POST",
@@ -141,9 +128,9 @@ export default function WebAuthnPage() {
           userVerification
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setIsAuthenticated(true)
         setAuthenticatorInfo(data.authenticatorInfo)
@@ -171,16 +158,16 @@ export default function WebAuthnPage() {
 
   const handleRevokeCredential = async (credentialId: string) => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/webauthn/revoke", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credentialId })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setRegisteredCredentials(registeredCredentials.filter(c => c.id !== credentialId))
         toast({
@@ -207,15 +194,15 @@ export default function WebAuthnPage() {
 
   const generateChallenge = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/webauthn/challenge", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setChallenge(data.challenge)
         toast({
@@ -241,7 +228,7 @@ export default function WebAuthnPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex justify-center items-center gap-3 mb-4">
@@ -273,7 +260,7 @@ export default function WebAuthnPage() {
                     <TabsTrigger value="credentials">Credentials</TabsTrigger>
                     <TabsTrigger value="settings">Settings</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="register" className="space-y-4">
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -296,7 +283,7 @@ export default function WebAuthnPage() {
                           />
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label>Authenticator Type</Label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
@@ -317,7 +304,7 @@ export default function WebAuthnPage() {
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label>User Verification</Label>
@@ -338,7 +325,7 @@ export default function WebAuthnPage() {
                             ))}
                           </div>
                         </div>
-                        
+
                         <div>
                           <Label>Resident Key</Label>
                           <div className="space-y-2 mt-2">
@@ -359,8 +346,8 @@ export default function WebAuthnPage() {
                           </div>
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={handleRegister}
                         disabled={isProcessing || !username || !displayName}
                         className="w-full"
@@ -377,7 +364,7 @@ export default function WebAuthnPage() {
                           </>
                         )}
                       </Button>
-                      
+
                       {credentialId && (
                         <div className="space-y-4">
                           <Alert>
@@ -386,7 +373,7 @@ export default function WebAuthnPage() {
                               Credential registered successfully! You can now use WebAuthn to authenticate.
                             </AlertDescription>
                           </Alert>
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <Label>Credential ID</Label>
@@ -418,7 +405,7 @@ export default function WebAuthnPage() {
                       )}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="authenticate" className="space-y-4">
                     <div className="space-y-4">
                       <div>
@@ -430,7 +417,7 @@ export default function WebAuthnPage() {
                           placeholder="Enter username"
                         />
                       </div>
-                      
+
                       <div>
                         <Label>User Verification</Label>
                         <div className="space-y-2 mt-2">
@@ -450,9 +437,9 @@ export default function WebAuthnPage() {
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Button 
+                        <Button
                           onClick={handleAuthenticate}
                           disabled={isProcessing || !username}
                           className="w-full"
@@ -469,8 +456,8 @@ export default function WebAuthnPage() {
                             </>
                           )}
                         </Button>
-                        
-                        <Button 
+
+                        <Button
                           onClick={generateChallenge}
                           disabled={isProcessing}
                           variant="outline"
@@ -489,7 +476,7 @@ export default function WebAuthnPage() {
                           )}
                         </Button>
                       </div>
-                      
+
                       {isAuthenticated && (
                         <Alert>
                           <CheckCircle className="h-4 w-4" />
@@ -500,7 +487,7 @@ export default function WebAuthnPage() {
                       )}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="credentials" className="space-y-4">
                     <div className="space-y-4">
                       {registeredCredentials.length === 0 ? (
@@ -544,7 +531,7 @@ export default function WebAuthnPage() {
                       )}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="settings" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -553,7 +540,7 @@ export default function WebAuthnPage() {
                           WebAuthn settings allow you to configure how biometric and hardware authentication works.
                         </AlertDescription>
                       </Alert>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Card>
                           <CardHeader>
@@ -578,7 +565,7 @@ export default function WebAuthnPage() {
                             </div>
                           </CardContent>
                         </Card>
-                        
+
                         <Card>
                           <CardHeader>
                             <CardTitle className="text-lg">Security Features</CardTitle>
@@ -626,19 +613,19 @@ export default function WebAuthnPage() {
                     {isAuthenticated ? "Authenticated" : "Not Authenticated"}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span>Credential Registered</span>
                   <Badge variant={isRegistered ? "default" : "secondary"}>
                     {isRegistered ? "Yes" : "No"}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span>Authenticator Type</span>
                   <span className="font-mono text-sm">{authenticatorType}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span>User Verification</span>
                   <span className="font-mono text-sm">{userVerification}</span>
@@ -693,7 +680,7 @@ export default function WebAuthnPage() {
                       <p className="text-sm text-gray-600">No passwords to remember or steal</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -701,7 +688,7 @@ export default function WebAuthnPage() {
                       <p className="text-sm text-gray-600">Credentials are bound to origin</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -709,7 +696,7 @@ export default function WebAuthnPage() {
                       <p className="text-sm text-gray-600">Something you have + something you are</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -736,14 +723,14 @@ export default function WebAuthnPage() {
                       Always verify the origin before authenticating
                     </AlertDescription>
                   </Alert>
-                  
+
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
                       Use HTTPS for all WebAuthn operations
                     </AlertDescription>
                   </Alert>
-                  
+
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>

@@ -27,7 +27,7 @@ function generateTOTPSecret(): string {
   return randomBytes(20).toString('hex')
 }
 
-function generateBackupCodes(secret: string, count: number = 10): string[] => {
+function generateBackupCodes(secret: string, count: number = 10): string[] {
   const codes = []
   for (let i = 0; i < count; i++) {
     codes.push(generateTOTPSecret())
@@ -50,11 +50,10 @@ function isRateLimited(email: string): boolean {
     (Date.now() - link.sentAt) < 60000) // 1 minute
   const attempts = recentLinks.length >= 3
   return recentLinks.length >= 5
-  return recentLinks.length >= 5
 }
 
 function generateMagicLinkUrl(token: string, baseUrl = 'https://yourapp.com') {
-  return \`\${baseUrl}/auth/totp/verify?token=\${token}\`
+  return `${baseUrl}/auth/totp/verify?token=${token}`
 }
 
 function verifyMagicLink(token: string): boolean {

@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  User, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  User,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -75,7 +75,7 @@ export default function RBACPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/authz/rbac/check', {
         method: 'POST',
@@ -88,7 +88,7 @@ export default function RBACPage() {
           action: selectedAction
         }),
       })
-      
+
       const data = await response.json()
       setResult(data)
     } catch (error) {
@@ -403,7 +403,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  RBAC is an authorization model that restricts system access to authorized users based on their roles within an organization. 
+                  RBAC is an authorization model that restricts system access to authorized users based on their roles within an organization.
                   Users are assigned roles, and roles are assigned permissions, creating a hierarchical access control system.
                 </p>
               </CardContent>
@@ -580,8 +580,8 @@ sequenceDiagram
                 </div>
               </div>
 
-              <Button 
-                onClick={handleCheckPermission} 
+              <Button
+                onClick={handleCheckPermission}
                 disabled={isLoading || !selectedUser || !selectedResource || !selectedAction}
                 className="w-full"
               >
@@ -771,21 +771,21 @@ sequenceDiagram
                     Grant users only the minimum permissions necessary to perform their job functions.
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-950">
                   <h4 className="font-semibold mb-2">Role Naming Conventions</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     Use clear, descriptive role names that reflect job functions and responsibilities.
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Regular Audits</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     Periodically review and audit role assignments and permissions to ensure they remain appropriate.
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-950">
                   <h4 className="font-semibold mb-2">Separation of Duties</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400">

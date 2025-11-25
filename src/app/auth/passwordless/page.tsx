@@ -606,7 +606,7 @@ def get_device_info_from_request(request: Request) -> Optional[dict]:
         "last_seen": datetime.utcnow()
     }`}
 
-  const flowDiagram = `\`\`\`mermaid
+  const flowDiagram = \`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client

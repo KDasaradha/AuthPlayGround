@@ -246,7 +246,7 @@ export default function SocialLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex justify-center items-center gap-3 mb-4">
@@ -285,7 +285,7 @@ export default function SocialLoginPage() {
                           <CardContent className="pt-6">
                             <div className="flex items-center justify-between mb-4">
                               <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-lg bg-gradient-to-r ${provider.color} text-white`}>
+                                <div className={`p-2 rounded-lg bg-linear-to-r ${provider.color} text-white`}>
                                   {provider.icon}
                                 </div>
                                 <div>

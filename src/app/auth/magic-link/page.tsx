@@ -524,7 +524,7 @@ async def magic_link_verify_page(request: Request):
         "token": session_token
     }`
 
-  const flowDiagram = `\`\`\`mermaid
+  const flowDiagram = \`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client

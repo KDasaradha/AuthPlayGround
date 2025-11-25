@@ -40,7 +40,7 @@ function isRateLimited(identifier: string, method: string): boolean {
     session["created_at"] > new Date() - 3600000) // 1 hour
   )
   
-  return recentAttempts >= 5 // Max 5 attempts per hour
+  return recentAttempts.length >= 5 // Max 5 attempts per hour
 }
 
 function isValidIdentifier(identifier: string, method: string): boolean {

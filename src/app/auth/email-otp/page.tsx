@@ -499,7 +499,7 @@ async def cleanup_expired_otps(request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = `\`\`\`mermaid
+  const flowDiagram = \`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client

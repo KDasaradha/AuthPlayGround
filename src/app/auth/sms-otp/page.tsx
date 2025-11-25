@@ -806,8 +806,7 @@ sequenceDiagram
                     value={otp}
                     onChange={(value) => setOtp(value)}
                     maxLength={6}
-                  >
-                    {null}
+                  />
                   </InputOTP>
                 </div>
                 <Button 

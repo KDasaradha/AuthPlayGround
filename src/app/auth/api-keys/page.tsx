@@ -1,6 +1,4 @@
-'use client'
-
-import { useState } from 'react'
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,7 +20,9 @@ import {
   Copy,
   Trash2,
   Shield,
-  Plus
+  Plus,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
@@ -533,7 +533,7 @@ async def api_key_cleanup(request: Request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = `\`\`mermaid
+  const flowDiagram = ```mermaid
 sequenceDiagram
     participant Client
     participant Browser
@@ -561,7 +561,7 @@ sequenceDiagram
     Server->>ApiKeyStore: Remove API key
     Server->>Browser: 200 OK
     Browser->>Client: Confirm deletion
-\`\`\``
+```
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

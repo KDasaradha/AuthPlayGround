@@ -9,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Settings, 
-  Check, 
-  X, 
-  Users, 
-  User, 
-  Shield, 
+import {
+  Settings,
+  Check,
+  X,
+  Users,
+  User,
+  Shield,
   Target,
   UserCheck,
   Info,
@@ -117,7 +117,7 @@ export default function ABACPage() {
       },
       {
         id: "policy_2",
-        name: "Engineering Access",
+        name: "Engineering Project Access",
         description: "Allow engineering access to engineering projects",
         conditions: [
           { attribute: "user.department", operator: "equals", value: "engineering" },
@@ -165,7 +165,7 @@ export default function ABACPage() {
 
   const handleCreateAttribute = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/abac/attribute", {
         method: "POST",
@@ -177,9 +177,9 @@ export default function ABACPage() {
           category: newAttributeCategory
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         const newAttribute: Attribute = {
           id: data.attribute.id,
@@ -217,7 +217,7 @@ export default function ABACPage() {
 
   const handleCreatePolicy = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/abac/policy", {
         method: "POST",
@@ -230,9 +230,9 @@ export default function ABACPage() {
           priority: newPolicyPriority
         })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         const newPolicy: Policy = {
           id: data.policy.id,
@@ -272,16 +272,16 @@ export default function ABACPage() {
 
   const handleEvaluateAccess = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/authz/abac/evaluate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(accessRequest)
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setEvaluationResult(data.result)
         toast({
@@ -340,7 +340,7 @@ export default function ABACPage() {
   const attributesByCategory = getAttributesByCategory()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex justify-center items-center gap-3 mb-4">
@@ -372,7 +372,7 @@ export default function ABACPage() {
                     <TabsTrigger value="evaluate">Evaluate</TabsTrigger>
                     <TabsTrigger value="results">Results</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="attributes" className="space-y-4">
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -385,7 +385,7 @@ export default function ABACPage() {
                           Create Attribute
                         </Button>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label>Attribute Name</Label>
@@ -430,8 +430,8 @@ export default function ABACPage() {
                           </select>
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={handleCreateAttribute}
                         disabled={isProcessing || !newAttributeName || !newAttributeValue}
                         className="w-full"
@@ -448,7 +448,7 @@ export default function ABACPage() {
                           </>
                         )}
                       </Button>
-                      
+
                       <div className="space-y-4">
                         {Object.entries(attributesByCategory).map(([category, categoryAttributes]) => (
                           <div key={category} className="space-y-2">
@@ -474,7 +474,7 @@ export default function ABACPage() {
                       </div>
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="policies" className="space-y-4">
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -487,7 +487,7 @@ export default function ABACPage() {
                           Create Policy
                         </Button>
                       </div>
-                      
+
                       <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
                         <h4 className="font-medium mb-3">New Policy</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -508,7 +508,7 @@ export default function ABACPage() {
                             />
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                           <div>
                             <Label>Effect</Label>
@@ -531,7 +531,7 @@ export default function ABACPage() {
                             />
                           </div>
                         </div>
-                        
+
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
                             <Label>Conditions</Label>
@@ -543,7 +543,7 @@ export default function ABACPage() {
                               <Plus className="h-4 w-4" />
                             </Button>
                           </div>
-                          
+
                           {policyConditions.map((condition, index) => (
                             <div key={index} className="flex gap-2">
                               <Input
@@ -580,8 +580,8 @@ export default function ABACPage() {
                           ))}
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={handleCreatePolicy}
                         disabled={isProcessing || !newPolicyName || policyConditions.length === 0}
                         className="w-full"
@@ -598,7 +598,7 @@ export default function ABACPage() {
                           </>
                         )}
                       </Button>
-                      
+
                       <div className="space-y-3">
                         <h4 className="font-medium">Existing Policies</h4>
                         <div className="space-y-2">
@@ -629,17 +629,17 @@ export default function ABACPage() {
                       </div>
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="evaluate" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Access Request Evaluation</h3>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label>User ID</Label>
                           <Input
                             value={accessRequest.userId}
-                            onChange={(e) => setAccessRequest({...accessRequest, userId: e.target.value})}
+                            onChange={(e) => setAccessRequest({ ...accessRequest, userId: e.target.value })}
                             placeholder="Enter user ID"
                           />
                         </div>
@@ -647,7 +647,7 @@ export default function ABACPage() {
                           <Label>Resource</Label>
                           <Input
                             value={accessRequest.resource}
-                            onChange={(e) => setAccessRequest({...accessRequest, resource: e.target.value})}
+                            onChange={(e) => setAccessRequest({ ...accessRequest, resource: e.target.value })}
                             placeholder="Enter resource"
                           />
                         </div>
@@ -655,7 +655,7 @@ export default function ABACPage() {
                           <Label>Action</Label>
                           <Input
                             value={accessRequest.action}
-                            onChange={(e) => setAccessRequest({...accessRequest, action: e.target.value})}
+                            onChange={(e) => setAccessRequest({ ...accessRequest, action: e.target.value })}
                             placeholder="Enter action"
                           />
                         </div>
@@ -663,14 +663,14 @@ export default function ABACPage() {
                           <Label>Context (JSON)</Label>
                           <textarea
                             value={JSON.stringify(accessRequest.context, null, 2)}
-                            onChange={(e) => setAccessRequest({...accessRequest, context: JSON.parse(e.target.value)})}
+                            onChange={(e) => setAccessRequest({ ...accessRequest, context: JSON.parse(e.target.value) })}
                             placeholder='{"time": "09:00", "location": "US"}'
                             className="w-full h-20 p-3 border rounded-md font-mono text-sm"
                           />
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={handleEvaluateAccess}
                         disabled={isProcessing || !accessRequest.userId || !accessRequest.resource || !accessRequest.action}
                         className="w-full"
@@ -689,11 +689,11 @@ export default function ABACPage() {
                       </Button>
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="results" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Evaluation Results</h3>
-                      
+
                       {evaluationResult ? (
                         <div className="space-y-4">
                           <Card>
@@ -704,7 +704,7 @@ export default function ABACPage() {
                                   {evaluationResult.decision.toUpperCase()}
                                 </Badge>
                               </div>
-                              
+
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                   <Label>Applied Policies</Label>
@@ -727,9 +727,9 @@ export default function ABACPage() {
                                   </div>
                                 </div>
                               </div>
-                              
+
                               <Separator />
-                              
+
                               <div className="space-y-2">
                                 <h5 className="font-medium">Evaluation Summary</h5>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -787,7 +787,7 @@ export default function ABACPage() {
                       <p className="text-sm text-gray-600">Context-aware decisions</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -795,7 +795,7 @@ export default function ABACPage() {
                       <p className="text-sm text-gray-600">Attribute-level control</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -803,7 +803,7 @@ export default function ABACPage() {
                       <p className="text-sm text-gray-600">Policy-based rules</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -867,11 +867,11 @@ export default function ABACPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">greater_than:</span>
-                    <span className="font-mono">attribute &gt; value</span>
+                    <span className="font-mono">attribute {'>'} value</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">in_range:</span>
-                    <span className="font-mono">value1 &lt;= attribute &lt;= value2</span>
+                    <span className="font-mono">value1 {'<='} attribute {'<='} value2</span>
                   </div>
                 </div>
               </CardContent>
