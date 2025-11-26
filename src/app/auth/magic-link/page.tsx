@@ -9,10 +9,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Mail, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Mail,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -40,7 +40,7 @@ export default function MagicLinkPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/magic-link/send', {
         method: 'POST',
@@ -49,10 +49,10 @@ export default function MagicLinkPage() {
         },
         body: JSON.stringify({ email }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         setLinkSent(true)
         startTimer(300) // 5 minutes = 300 seconds
@@ -524,7 +524,7 @@ async def magic_link_verify_page(request: Request):
         "token": session_token
     }`
 
-  const flowDiagram = \`\`\`mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -603,7 +603,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Magic link authentication sends a unique, time-limited URL to the user's email address. 
+                  Magic link authentication sends a unique, time-limited URL to the user's email address.
                   Clicking the link authenticates the user without requiring a password.
                 </p>
               </CardContent>
@@ -659,7 +659,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Magic links should be single-use and have short expiration times. 
+              <strong>Security Note:</strong> Magic links should be single-use and have short expiration times.
               Always validate tokens and implement proper logging to detect abuse.
             </AlertDescription>
           </Alert>
@@ -738,8 +738,8 @@ sequenceDiagram
                       placeholder="Enter your email address"
                     />
                   </div>
-                  <Button 
-                    onClick={handleSendLink} 
+                  <Button
+                    onClick={handleSendLink}
                     disabled={isLoading || !email}
                     className="w-full"
                   >
@@ -762,8 +762,8 @@ sequenceDiagram
                   <div className="flex items-center justify-between">
                     <Label>Time remaining: {formatTime(timeLeft)}</Label>
                     {timeLeft > 0 && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={handleResendLink}
                         disabled={isLoading}
@@ -894,7 +894,7 @@ sequenceDiagram
                     Prevention: Email security, 2FA, user education
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Link Reuse</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -904,7 +904,7 @@ sequenceDiagram
                     Prevention: Single-use tokens, immediate invalidation
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Token Guessing</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">

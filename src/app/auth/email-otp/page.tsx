@@ -4,16 +4,16 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { InputOTP } from '@/components/ui/input-otp'
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Mail, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Mail,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -41,7 +41,7 @@ export default function EmailOTPPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/email-otp/send', {
         method: 'POST',
@@ -50,10 +50,10 @@ export default function EmailOTPPage() {
         },
         body: JSON.stringify({ email }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         setOtpSent(true)
         startTimer(60) // 60 seconds countdown
@@ -73,7 +73,7 @@ export default function EmailOTPPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/email-otp/verify', {
         method: 'POST',
@@ -82,10 +82,10 @@ export default function EmailOTPPage() {
         },
         body: JSON.stringify({ email, otp }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         // Reset form
         setEmail('')
@@ -499,7 +499,7 @@ async def cleanup_expired_otps(request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = \`\`\`mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -578,7 +578,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Email OTP authentication sends a one-time password to the user's registered email address. 
+                  Email OTP authentication sends a one-time password to the user's registered email address.
                   The user must provide this OTP within a limited time frame to verify their identity.
                 </p>
               </CardContent>
@@ -634,7 +634,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Email OTP should be used as part of a multi-factor authentication strategy. 
+              <strong>Security Note:</strong> Email OTP should be used as part of a multi-factor authentication strategy.
               Always validate email format and implement rate limiting to prevent abuse.
             </AlertDescription>
           </Alert>
@@ -713,8 +713,8 @@ sequenceDiagram
                       placeholder="Enter your email address"
                     />
                   </div>
-                  <Button 
-                    onClick={handleSendOTP} 
+                  <Button
+                    onClick={handleSendOTP}
                     disabled={isLoading || !email}
                     className="w-full"
                   >
@@ -738,8 +738,8 @@ sequenceDiagram
                     <div className="flex items-center justify-between">
                       <Label>Time remaining: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</Label>
                       {timeLeft > 0 && (
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={handleResendOTP}
                           disabled={isLoading}
@@ -757,24 +757,31 @@ sequenceDiagram
 
               <div className="space-y-4">
                 <h3 className="font-semibold">Step 2: Verify OTP</h3>
+
                 <div>
                   <Label htmlFor="otp">6-Digit Code</Label>
-                  <InputOTP
-                    value={otp}
-                    onChange={(value) => setOtp(value)}
-                    maxLength={6}
-                  />
+
+                  <InputOTP value={otp} onChange={setOtp} maxLength={6}>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
                 </div>
-                <Button 
-                  onClick={handleVerifyOTP} 
-                  disabled={isLoading || !otp || otp.length !== 6}
+
+                <Button
+                  onClick={handleVerifyOTP}
+                  disabled={isLoading || otp.length !== 6}
                   className="w-full"
                 >
                   {isLoading ? 'Verifying...' : 'Verify OTP'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
-
               {result && (
                 <Alert className={result.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
                   <div className="flex items-center gap-2">
@@ -914,7 +921,7 @@ sequenceDiagram
                     Prevention: Email security, 2FA, account monitoring
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Brute Force Attacks</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -924,7 +931,7 @@ sequenceDiagram
                     Prevention: Rate limiting, account lockout, monitoring
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Phishing</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">

@@ -92,6 +92,8 @@ function initializeSampleChecks() {
         client_id: "third_party_456789",
         requested_scopes: ["read:contacts"],
         granted_scopes: [],
+        resource: "/api/user/contacts",
+        action: "read",
         result: "deny",
         reason: "Scope grant has expired",
         evaluation_time: 5,

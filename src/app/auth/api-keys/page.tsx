@@ -8,10 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Key, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Key,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -43,6 +43,7 @@ export default function ApiKeysPage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<{ success: boolean; message: string; data?: any } | null>(null)
+  const [showToken, setShowToken] = useState(false)
 
   const availablePermissions = [
     'read:users',
@@ -64,7 +65,7 @@ export default function ApiKeysPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/api-keys/generate', {
         method: 'POST',
@@ -76,10 +77,10 @@ export default function ApiKeysPage() {
           permissions: selectedPermissions
         }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         setApiKey(data.data.key)
         setApiKeys(prev => [data.data, ...prev])
@@ -101,7 +102,7 @@ export default function ApiKeysPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/api-keys/validate', {
         method: 'POST',
@@ -111,7 +112,7 @@ export default function ApiKeysPage() {
         },
         body: JSON.stringify({}),
       })
-      
+
       const data = await response.json()
       setResult(data)
     } catch (error) {
@@ -134,7 +135,7 @@ export default function ApiKeysPage() {
         },
         body: JSON.stringify({ keyId }),
       })
-      
+
       const data = await response.json()
       if (data.success) {
         setApiKeys(prev => prev.filter(key => key.id !== keyId))
@@ -533,7 +534,7 @@ async def api_key_cleanup(request: Request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant Client
     participant Browser
@@ -561,7 +562,7 @@ sequenceDiagram
     Server->>ApiKeyStore: Remove API key
     Server->>Browser: 200 OK
     Browser->>Client: Confirm deletion
-```
+\`\`\``;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -608,7 +609,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  API Key authentication uses unique, long-lived keys sent in HTTP headers 
+                  API Key authentication uses unique, long-lived keys sent in HTTP headers
                   to authenticate programmatic access to APIs and services.
                 </p>
               </CardContent>
@@ -664,7 +665,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> API keys should be treated like passwords - stored securely, 
+              <strong>Security Note:</strong> API keys should be treated like passwords - stored securely,
               rotated regularly, and have limited permissions and expiration.
             </AlertDescription>
           </Alert>
@@ -745,25 +746,31 @@ sequenceDiagram
                   </div>
                   <div>
                     <Label>Permissions</Label>
-                    <Select
-                      value={selectedPermissions.join(',')}
-                      onValueChange={(value) => setSelectedPermissions(value.split(',').filter(p => p))}
-                      multiple
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select permissions" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availablePermissions.map((permission) => (
-                          <SelectItem key={permission} value={permission}>
+                    <div className="border rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
+                      {availablePermissions.map((permission) => (
+                        <div key={permission} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={permission}
+                            checked={selectedPermissions.includes(permission)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedPermissions([...selectedPermissions, permission])
+                              } else {
+                                setSelectedPermissions(selectedPermissions.filter(p => p !== permission))
+                              }
+                            }}
+                            className="mr-2"
+                          />
+                          <label htmlFor={permission} className="text-sm cursor-pointer">
                             {permission}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <Button 
-                    onClick={handleGenerateKey} 
+                  <Button
+                    onClick={handleGenerateKey}
                     disabled={isLoading || !apiKeyName || selectedPermissions.length === 0}
                     className="w-full"
                   >
@@ -828,8 +835,8 @@ sequenceDiagram
                     placeholder="Enter API key to validate"
                     className="flex-1"
                   />
-                  <Button 
-                    onClick={handleValidateKey} 
+                  <Button
+                    onClick={handleValidateKey}
                     disabled={isLoading || !apiKey}
                   >
                     {isLoading ? 'Validating...' : 'Validate Key'}
@@ -969,7 +976,7 @@ sequenceDiagram
                     Prevention: Code scanning, access controls, monitoring
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Key Abuse</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -979,7 +986,7 @@ sequenceDiagram
                     Prevention: Rate limiting, usage monitoring, quick revocation
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Insufficient Rotation</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">

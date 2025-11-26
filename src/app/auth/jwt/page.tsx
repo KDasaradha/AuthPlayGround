@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -37,7 +37,7 @@ export default function JWTPage() {
   const handleLogin = async () => {
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/jwt/login', {
         method: 'POST',
@@ -46,7 +46,7 @@ export default function JWTPage() {
         },
         body: JSON.stringify({ username, password }),
       })
-      
+
       const data = await response.json()
       setResult(data)
       if (data.success) {
@@ -62,7 +62,7 @@ export default function JWTPage() {
 
   const handleRefresh = async () => {
     if (!refreshToken) return
-    
+
     setIsLoading(true)
     try {
       const response = await fetch('/api/auth/jwt/refresh', {
@@ -72,7 +72,7 @@ export default function JWTPage() {
         },
         body: JSON.stringify({ refreshToken }),
       })
-      
+
       const data = await response.json()
       setResult(data)
       if (data.success) {
@@ -87,7 +87,7 @@ export default function JWTPage() {
 
   const handleDecode = () => {
     if (!accessToken) return
-    
+
     try {
       const parts = accessToken.split('.')
       if (parts.length === 3) {
@@ -404,7 +404,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  JWT (JSON Web Token) is an open standard for securely transmitting information between parties as a JSON object. 
+                  JWT (JSON Web Token) is an open standard for securely transmitting information between parties as a JSON object.
                   It uses access tokens for short-term authentication and refresh tokens for obtaining new access tokens.
                 </p>
               </CardContent>
@@ -460,7 +460,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> JWT tokens should be stored securely (httpOnly cookies or secure storage) 
+              <strong>Security Note:</strong> JWT tokens should be stored securely (httpOnly cookies or secure storage)
               and access tokens should have short expiration times with refresh tokens for long-term sessions.
             </AlertDescription>
           </Alert>
@@ -550,8 +550,8 @@ sequenceDiagram
                       placeholder="Enter password"
                     />
                   </div>
-                  <Button 
-                    onClick={handleLogin} 
+                  <Button
+                    onClick={handleLogin}
                     disabled={isLoading || !username || !password}
                     className="w-full"
                   >
@@ -592,7 +592,7 @@ sequenceDiagram
                   <Separator />
                   <div className="space-y-6">
                     <h3 className="font-semibold">2. Token Management</h3>
-                    
+
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div>
@@ -613,9 +613,9 @@ sequenceDiagram
                             rows={3}
                           />
                         </div>
-                        
-                        <Button 
-                          onClick={handleRefresh} 
+
+                        <Button
+                          onClick={handleRefresh}
                           disabled={isLoading || !refreshToken}
                           className="w-full"
                         >
@@ -635,9 +635,9 @@ sequenceDiagram
                             rows={6}
                           />
                         </div>
-                        
-                        <Button 
-                          onClick={handleDecode} 
+
+                        <Button
+                          onClick={handleDecode}
                           disabled={!accessToken}
                           className="w-full"
                         >
@@ -671,7 +671,7 @@ sequenceDiagram
               <div>
                 <h3 className="font-semibold text-lg mb-3">2. Token Generation</h3>
                 <p className="text-slate-600 dark:text-slate-400">
-                  <strong>Access Token:</strong> Short-lived (15-30 minutes) containing user claims and permissions.<br/>
+                  <strong>Access Token:</strong> Short-lived (15-30 minutes) containing user claims and permissions.<br />
                   <strong>Refresh Token:</strong> Long-lived (7-30 days) used only to obtain new access tokens.
                 </p>
               </div>
@@ -723,17 +723,17 @@ sequenceDiagram
                 <div>
                   <h4 className="font-semibold mb-2">Header</h4>
                   <pre className="bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm">
-{`{
+                    {`{
   "alg": "HS256",
   "typ": "JWT"
 }`}
                   </pre>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold mb-2">Payload</h4>
                   <pre className="bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm">
-{`{
+                    {`{
   "sub": "1234567890",
   "username": "admin",
   "iat": 1516239022,
@@ -741,11 +741,11 @@ sequenceDiagram
 }`}
                   </pre>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold mb-2">Signature</h4>
                   <pre className="bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm">
-{`HMACSHA256(
+                    {`HMACSHA256(
   base64UrlEncode(header) + "." +
   base64UrlEncode(payload),
   secret
