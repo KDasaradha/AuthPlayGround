@@ -9,10 +9,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import {
-  Clock,
-  AlertTriangle,
-  CheckCircle,
+import { 
+  Clock, 
+  AlertTriangle, 
+  CheckCircle, 
   ArrowRight,
   Code,
   BookOpen,
@@ -36,7 +36,7 @@ export default function SessionAuthPage() {
   const handleLogin = async () => {
     setIsLoading(true)
     setResult(null)
-
+    
     try {
       const response = await fetch('/api/auth/session-auth/login', {
         method: 'POST',
@@ -46,10 +46,10 @@ export default function SessionAuthPage() {
         credentials: 'include', // Important for cookies
         body: JSON.stringify({ username, password }),
       })
-
+      
       const data = await response.json()
       setResult(data)
-
+      
       if (data.success) {
         setIsLoggedIn(true)
         setSessionData(data.data)
@@ -63,16 +63,16 @@ export default function SessionAuthPage() {
 
   const handleLogout = async () => {
     setIsLoading(true)
-
+    
     try {
       const response = await fetch('/api/auth/session-auth/logout', {
         method: 'POST',
         credentials: 'include',
       })
-
+      
       const data = await response.json()
       setResult(data)
-
+      
       if (data.success) {
         setIsLoggedIn(false)
         setSessionData(null)
@@ -92,10 +92,10 @@ export default function SessionAuthPage() {
         method: 'GET',
         credentials: 'include',
       })
-
+      
       const data = await response.json()
       setResult(data)
-
+      
       if (data.success) {
         setIsLoggedIn(true)
         setSessionData(data.data)
@@ -371,7 +371,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Session authentication stores user authentication state on the server and sends a session identifier
+                  Session authentication stores user authentication state on the server and sends a session identifier 
                   to the client via HTTP-only cookies. The server validates the session on each request.
                 </p>
               </CardContent>
@@ -427,7 +427,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Always use HTTP-only cookies with secure and SameSite attributes
+              <strong>Security Note:</strong> Always use HTTP-only cookies with secure and SameSite attributes 
               to prevent XSS and CSRF attacks. Implement proper session timeout and invalidation.
             </AlertDescription>
           </Alert>
@@ -517,8 +517,8 @@ sequenceDiagram
                         placeholder="Enter password"
                       />
                     </div>
-                    <Button
-                      onClick={handleLogin}
+                    <Button 
+                      onClick={handleLogin} 
                       disabled={isLoading || !username || !password}
                       className="w-full"
                     >
@@ -569,19 +569,19 @@ sequenceDiagram
                           <p><strong>Session ID:</strong> {sessionData?.sessionId?.substring(0, 8)}...</p>
                         </div>
                       </div>
-
+                      
                       <div className="space-y-2">
-                        <Button
-                          onClick={checkSession}
+                        <Button 
+                          onClick={checkSession} 
                           variant="outline"
                           className="w-full"
                         >
                           <Database className="mr-2 h-4 w-4" />
                           Check Session Status
                         </Button>
-
-                        <Button
-                          onClick={handleLogout}
+                        
+                        <Button 
+                          onClick={handleLogout} 
                           variant="destructive"
                           className="w-full"
                         >
@@ -732,7 +732,7 @@ sequenceDiagram
                     Prevention: HTTPS, HTTP-only cookies, SameSite attribute
                   </p>
                 </div>
-
+                
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Session Fixation</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -742,7 +742,7 @@ sequenceDiagram
                     Prevention: Regenerate session ID on login
                   </p>
                 </div>
-
+                
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Cross-Site Scripting (XSS)</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -757,7 +757,7 @@ sequenceDiagram
           </Card>
         </TabsContent>
       </Tabs>
-
+      
       {/* Back Button */}
       <div className="mt-8">
         <BackButton />

@@ -92,7 +92,6 @@ function verifyMagicLink(token: string): boolean {
       email: user.email
     }
   }
-  }
 
   // Clean up used magic link
   magicLinkStore.delete(token)

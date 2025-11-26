@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
+import { 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle, 
   ArrowRight,
   Code,
   BookOpen,
@@ -50,23 +50,23 @@ export default function PasswordlessPage() {
 
     setIsLoading(true)
     setResult(null)
-
+    
     try {
       const response = await fetch('/api/auth/passwordless/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+        body: JSON.stringify({ 
           identifier,
           method,
           deviceInfo: navigator.userAgent
         }),
       })
-
+      
       const data = await response.json()
       setResult(data)
-
+      
       if (data.success) {
         setIsLoggedIn(true)
         setSessionData(data.data)
@@ -80,7 +80,7 @@ export default function PasswordlessPage() {
 
   const handleLogout = async () => {
     setIsLoading(true)
-
+    
     try {
       const response = await fetch('/api/auth/passwordless/logout', {
         method: 'POST',
@@ -89,10 +89,10 @@ export default function PasswordlessPage() {
         },
         body: JSON.stringify({}),
       })
-
+      
       const data = await response.json()
       setResult(data)
-
+      
       if (data.success) {
         setIsLoggedIn(false)
         setSessionData(null)
@@ -534,79 +534,80 @@ async def cleanup_expired_sessions(request, call_next):
     return response`
 
 # Device management
-  @app.post("/auth/passwordless/register-device")
-  async def register_device_endpoint(request: Request):
-  """Register trusted device"""
-  device_info = get_device_info(request)
-
-  if not device_info:
+@app.post("/auth/passwordless/register-device")
+async def register_device_endpoint(request: Request):
+    """Register trusted device"""
+    device_info = get_device_info(request)
+    
+    if not device_info:
         raise HTTPException(
     status_code = status.HTTP_400_BAD_REQUEST,
     detail = "Device information required"
-  )
-
-  device_id = device_info["device_id"]
+        )
+    
+    device_id = device_info["device_id"]
     
     # Store trusted device
     # In production, this would go to a database
-  trusted_devices[device_id] = {
-    "device_id": device_id,
-    "fingerprint": device_info["fingerprint"],
-    "trusted": True,
-    "first_seen": datetime.utcnow(),
-    "last_seen": datetime.utcnow()
-  }
-
-  return {
-    "success": True,
-    "message": "Device registered successfully",
-    "device_id": device_id
-  }
+    trusted_devices[device_id] = {
+        "device_id": device_id,
+        "fingerprint": device_info["fingerprint"],
+        "trusted": True,
+        "first_seen": datetime.utcnow(),
+        "last_seen": datetime.utcnow()
+    }
+    
+    return {
+        "success": True,
+        "message": "Device registered successfully",
+        "device_id": device_id
+    }
 
 def verify_user_credentials(user: dict, identifier: str, method: str) -> bool:
-  """Verify user credentials for passwordless auth"""
-  if method == "email":
+    """Verify user credentials for passwordless auth"""
+    if method == "email":
         # For email, we might have additional verification
-  return True  # Simplified for demo
+        return True  # Simplified for demo
     elif method == "phone":
         # For phone, we might have additional verification
-  return True  # Simplified for demo
+        return True  # Simplified for demo
     elif method == "username":
         # For username, we'd verify against stored password
-  hashed_password = user.get("hashed_password", "")
+        hashed_password = user.get("hashed_password", "")
         # In this demo, we'll accept any non-empty username
-  return len(identifier) >= 3
-  return False
+        return len(identifier) >= 3
+    return False
 
 # Mock trusted devices storage
-  trusted_devices = {}`
+trusted_devices = {}`
 
 def is_trusted_device(device_id: str) -> bool:
     """Check if device is trusted"""
     return trusted_devices.get(device_id, {}).get("trusted", False)`
 
 def get_device_info_from_request(request: Request) -> Optional[dict]:
-  """Extract device information from request"""
-  user_agent = request.headers.get("user-agent")
-  if not user_agent:
-    return None
+    """Extract device information from request"""
+    user_agent = request.headers.get("user-agent")
+    if not user_agent:
+        return None
     
     # Parse user agent for device info
     device_fingerprint = secrets.token_urlsafe(32)
     
     return {
-      "device_id": device_fingerprint,
-      "fingerprint": json.dumps({
-        "user_agent": user_agent,
-        "ip": request.client.host,
-        "platform": request.headers.get("sec-ch-ua-platform"),
-        "mobile": "mobile" in user_agent.lower()
-      }),
-      "trusted": is_trusted_device(device_fingerprint),
-      "last_seen": datetime.utcnow()
-    }`}
+        "device_id": device_fingerprint,
+        "fingerprint": json.dumps({
+            "user_agent": user_agent,
+            "ip": request.client.host,
+            "platform": request.headers.get("sec-ch-ua-platform"),
+            "mobile": "mobile" in user_agent.lower()
+        }),
+        "trusted": is_trusted_device(device_fingerprint),
+        "last_seen": datetime.utcnow()
+    }
+}`
 
-  const flowDiagram = \`\`\`mermaid
+  const flowDiagram = ```mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -640,7 +641,7 @@ sequenceDiagram
     Server->>Client: 200 OK
     Client->>Client: Clear auth token
     end
-\`\`\``
+```
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -651,7 +652,7 @@ sequenceDiagram
             <Lock className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-sate-900 dark:text-slate-100">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
               Passwordless Authentication
             </h1>
             <p className="text-slate-600 dark:text-slate-400">
@@ -687,7 +688,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Passwordless authentication allows users to sign in without passwords using various identifiers
+                  Passwordless authentication allows users to sign in without passwords using various identifiers 
                   like email, phone number, device ID, or biometric data.
                 </p>
               </CardContent>
@@ -743,7 +744,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Passwordless authentication should be combined with device trust management
+              <strong>Security Note:</strong> Passwordless authentication should be combined with device trust management 
               and rate limiting to prevent abuse while maintaining user convenience.
             </AlertDescription>
           </Alert>
@@ -827,217 +828,217 @@ sequenceDiagram
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div>
-                  <Label>Identifier</Label>
-                  <Input
-                    type="text"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder={getIdentifierPlaceholder()}
-                  />
-                </div>
-                <Button
-                  onClick={handleLogin}
-                  disabled={isLoading || !identifier}
-                  className="w-full"
-                >
-                  {isLoading ? 'Authenticating...' : 'Login'}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded-lg">
-                <h4 className="font-semibold mb-2">Login Status</h4>
-                {isLoggedIn ? (
-                  <div className="text-center">
-                    <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                    <div>
-                      <p className="text-green-800 font-medium">Successfully Logged In</p>
-                      <p className="text-sm text-green-600">
-                        User: {sessionData?.user?.username}
-                      </p>
-                      <Button
-                        onClick={handleLogout}
-                        variant="outline"
-                        size="sm"
-                        className="mt-2"
-                      >
-                        Logout
-                      </Button>
-                    </div>
                   </div>
-                ) : (
-                  <div className="text-center">
-                    <AlertTriangle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-                    <div>
-                      <p className="text-yellow-800 font-medium">Not Logged In</p>
-                      <p className="text-sm text-yellow-600">
-                        Please authenticate to continue
-                      </p>
-                    </div>
+                  <div>
+                    <Label>Identifier</Label>
+                    <Input
+                      type="text"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      placeholder={getIdentifierPlaceholder()}
+                    />
                   </div>
-                )}
+                  <Button 
+                    onClick={handleLogin} 
+                    disabled={isLoading || !identifier}
+                    className="w-full"
+                  >
+                    {isLoading ? 'Authenticating...' : 'Login'}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
               </div>
 
-              {result && (
-                <Alert className={result.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
-                  <div className="flex items-center gap-2">
-                    {result.success ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
-                    )}
-                    <AlertDescription className={result.success ? 'text-green-800' : 'text-red-800'}>
-                      {result.message}
-                      {result.data && (
-                        <div className="mt-2 text-sm">
-                          <strong>Session ID:</strong> {result.data?.sessionId?.substring(0, 8)}...
-                          <strong>Expires:</strong> {new Date(result.data?.expiresAt).toLocaleString()}
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded-lg">
+                  <h4 className="font-semibold mb-2">Login Status</h4>
+                  {isLoggedIn ? (
+                    <div className="text-center">
+                      <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                      <div>
+                        <p className="text-green-800 font-medium">Successfully Logged In</p>
+                        <p className="text-sm text-green-600">
+                          User: {sessionData?.user?.username}
+                        </p>
+                        <Button 
+                          onClick={handleLogout}
+                          variant="outline"
+                          size="sm"
+                          className="mt-2"
+                        >
+                          Logout
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <AlertTriangle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                      <div>
+                        <p className="text-yellow-800 font-medium">Not Logged In</p>
+                        <p className="text-sm text-yellow-600">
+                          Please authenticate to continue
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {result && (
+                  <Alert className={result.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
+                    <div className="flex items-center gap-2">
+                      {result.success ? (
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <AlertTriangle className="h-4 w-4 text-red-600" />
+                      )}
+                      <AlertDescription className={result.success ? 'text-green-800' : 'text-red-800'}>
+                        {result.message}
+                        {result.data && (
+                          <div className="mt-2 text-sm">
+                            <strong>Session ID:</strong> {result.data?.sessionId?.substring(0, 8)}...
+                            <strong>Expires:</strong> {new Date(result.data?.expiresAt).toLocaleString()}
                           <strong>User:</strong> {result.data?.user?.username}
                           <strong>Method:</strong> {method}
                         </div>
-                      )}
-                    </AlertDescription>
+                        )}
+                      </AlertDescription>
+                    </div>
                   </div>
                 </div>
-                </div>
               )}
-          </CardContent>
-        </Card>
-      </TabsContent>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Explanation Tab */}
-      <TabsContent value="explanation" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Step-by-Step Explanation</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-lg mb-3">1. Identifier Collection</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                User provides their identifier (email, phone, username, device ID) through the application interface.
-              </p>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h3 className="font-semibold text-lg mb-3">2. Method Selection</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                User chooses their preferred passwordless authentication method from available options.
-              </p>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h3 className="font-semibold text-lg mb-3">3. Device Fingerprinting</h3>
-              <p className="text-scale-600 dark:text-slate-400">
-                Server collects device information (user agent, IP address, platform) to create a unique device fingerprint.
-              </p>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h3 className="font-semibold text-lg mb-3">4. Session Creation</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Server generates a secure session token and stores it with expiration time (typically 24 hours).
-              </p>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h3 className="font-semibold text-lg mb-3">5. Authentication</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Server validates the identifier and creates a passwordless session without requiring passwords.
-              </p>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h3 className="font-semibold text-lg mb-3">6. Session Management</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Server manages passwordless sessions with automatic expiration and invalidation.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Passwordless Security Best Practices</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
+        {/* Explanation Tab */}
+        <TabsContent value="explanation" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Step-by-Step Explanation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
               <div>
-                <h4 className="font-semibold text-green-600 mb-2">Identifier Security</h4>
-                <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-                  <li>• Validate all identifier formats</li>
-                  <li>• Implement rate limiting per identifier</li>
-                  <li>• Use secure token generation</li>
-                  <li>• Sanitize all inputs</li>
-                </ul>
+                <h3 className="font-semibold text-lg mb-3">1. Identifier Collection</h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  User provides their identifier (email, phone, username, device ID) through the application interface.
+                </p>
               </div>
+
+              <Separator />
+
               <div>
-                <h4 className="font-semibold text-blue-600 mb-2">Device Security</h4>
-                <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-                  <li>• Implement device fingerprinting</li>
-                  <li>• Maintain trusted device registry</li>
-                  <li>• Monitor for suspicious activity</li>
-                  <li>• Implement device deprecation policies</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Common Passwordless Attacks & Prevention</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="p-4 border-l-4 border-red-500 bg-red-50 dark:bg-red-950">
-                <h4 className="font-semibold mb-2">Identifier Spoofing</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                  Attacker uses fake email addresses or phone numbers to gain access.
-                </p>
-                <p className="text-sm font-medium text-red-700">
-                  Prevention: Email verification, domain validation, monitoring
+                <h3 className="font-semibold text-lg mb-3">2. Method Selection</h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  User chooses their preferred passwordless authentication method from available options.
                 </p>
               </div>
 
-              <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
-                <h4 className="font-semibold mb-2">Device Cloning</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                  Attacker copies device fingerprint to bypass authentication.
-                </p>
-                <p className="text-sm font-medium text-yellow-700">
-                  Prevention: Device fingerprinting, trusted devices, behavioral analysis
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-3">3. Device Fingerprinting</h3>
+                <p className="text-scale-600 dark:text-slate-400">
+                  Server collects device information (user agent, IP address, platform) to create a unique device fingerprint.
                 </p>
               </div>
 
-              <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
-                <h4 className="font-semibold mb-2">Session Hijacking</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                  Attacker steals or reuses session tokens.
-                </p>
-                <p className="text-sm font-medium text-blue-700">
-                  Prevention: Secure token storage, HTTPS, short expiration
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-3">4. Session Creation</h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Server generates a secure session token and stores it with expiration time (typically 24 hours).
                 </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
-    </div >
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-3">5. Authentication</h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Server validates the identifier and creates a passwordless session without requiring passwords.
+                </p>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold text-lg mb-3">6. Session Management</h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Server manages passwordless sessions with automatic expiration and invalidation.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Passwordless Security Best Practices</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-green-600 mb-2">Identifier Security</h4>
+                  <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+                    <li>• Validate all identifier formats</li>
+                    <li>• Implement rate limiting per identifier</li>
+                    <li>• Use secure token generation</li>
+                    <li>• Sanitize all inputs</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-blue-600 mb-2">Device Security</h4>
+                  <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+                    <li>• Implement device fingerprinting</li>
+                    <li>• Maintain trusted device registry</li>
+                    <li>• Monitor for suspicious activity</li>
+                    <li>• Implement device deprecation policies</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Common Passwordless Attacks & Prevention</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="p-4 border-l-4 border-red-500 bg-red-50 dark:bg-red-950">
+                  <h4 className="font-semibold mb-2">Identifier Spoofing</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                    Attacker uses fake email addresses or phone numbers to gain access.
+                  </p>
+                  <p className="text-sm font-medium text-red-700">
+                    Prevention: Email verification, domain validation, monitoring
+                  </p>
+                </div>
+                
+                <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+                  <h4 className="font-semibold mb-2">Device Cloning</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                    Attacker copies device fingerprint to bypass authentication.
+                  </p>
+                  <p className="text-sm font-medium text-yellow-700">
+                    Prevention: Device fingerprinting, trusted devices, behavioral analysis
+                  </p>
+                </div>
+                
+                <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
+                  <h4 className="font-semibold mb-2">Session Hijacking</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                    Attacker steals or reuses session tokens.
+                  </p>
+                  <p className="text-sm font-medium text-blue-700">
+                    Prevention: Secure token storage, HTTPS, short expiration
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }

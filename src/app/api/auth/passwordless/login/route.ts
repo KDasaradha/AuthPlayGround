@@ -37,7 +37,7 @@ function isRateLimited(identifier: string, method: string): boolean {
   const recentAttempts = Array.from(passwordlessSessions.values()).filter(session => 
     session["identifier"] === identifier && 
     session["method"] === method && 
-    session["created_at"] > new Date() - 3600000) // 1 hour
+    session["created_at"] > new Date(Date.now() - 3600000) // 1 hour
   )
   
   return recentAttempts.length >= 5 // Max 5 attempts per hour
@@ -50,8 +50,8 @@ function isValidIdentifier(identifier: string, method: string): boolean {
     return emailRegex.test(identifier)
   } else if (method === 'phone') {
     // Phone number validation
-    const cleaned = ''.join(c for c in identifier if c.isdigit())
-    return 10 <= len(cleaned) <= 15 and cleaned.isdigit()
+    const cleaned = identifier.replace(/\D/g, '')
+    return 10 <= cleaned.length <= 15 && /^\d+$/.test(cleaned)
   } else if (method === 'username') {
     // Username validation
     return len(identifier) >= 3 && len(identifier) <= 50

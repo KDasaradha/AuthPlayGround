@@ -9,11 +9,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import {
-  Key,
-  Shield,
-  AlertTriangle,
-  CheckCircle,
+import { 
+  Key, 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle, 
   ArrowRight,
   Code,
   BookOpen,
@@ -30,7 +30,7 @@ export default function BasicAuthPage() {
   const handleLogin = async () => {
     setIsLoading(true)
     setResult(null)
-
+    
     try {
       const response = await fetch('/api/auth/basic-auth/login', {
         method: 'POST',
@@ -39,7 +39,7 @@ export default function BasicAuthPage() {
         },
         body: JSON.stringify({ username, password }),
       })
-
+      
       const data = await response.json()
       setResult(data)
     } catch (error) {
@@ -191,7 +191,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Basic Authentication is a simple authentication scheme built into the HTTP protocol.
+                  Basic Authentication is a simple authentication scheme built into the HTTP protocol. 
                   It sends credentials as a Base64 encoded string in the Authorization header.
                 </p>
               </CardContent>
@@ -246,7 +246,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Basic Auth sends credentials in Base64 encoding, which is not encryption.
+              <strong>Security Note:</strong> Basic Auth sends credentials in Base64 encoding, which is not encryption. 
               Always use HTTPS to protect credentials in transit.
             </AlertDescription>
           </Alert>
@@ -334,8 +334,8 @@ sequenceDiagram
                       placeholder="Enter password"
                     />
                   </div>
-                  <Button
-                    onClick={handleLogin}
+                  <Button 
+                    onClick={handleLogin} 
                     disabled={isLoading || !username || !password}
                     className="w-full"
                   >

@@ -41,16 +41,16 @@ export default function TwoFactorAuthPage() {
 
   const handleLogin = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/2fa/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         if (data.requires2FA) {
           toast({
@@ -85,16 +85,16 @@ export default function TwoFactorAuthPage() {
 
   const handleEnable2FA = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/2fa/enable", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ method: selectedMethod })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setIs2FAEnabled(true)
         if (data.backupCodes) {
@@ -124,16 +124,16 @@ export default function TwoFactorAuthPage() {
 
   const handleVerifyCode = async (code: string) => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/2fa/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, method: selectedMethod })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setIsAuthenticated(true)
         toast({
@@ -160,15 +160,15 @@ export default function TwoFactorAuthPage() {
 
   const handleDisable2FA = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/2fa/disable", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setIs2FAEnabled(false)
         toast({
@@ -195,18 +195,18 @@ export default function TwoFactorAuthPage() {
 
   const handleAddTrustedDevice = async () => {
     if (!newDeviceName.trim()) return
-
+    
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/2fa/trusted-device", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deviceName: newDeviceName })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setTrustedDevices([...trustedDevices, data.device])
         setNewDeviceName("")
@@ -234,14 +234,14 @@ export default function TwoFactorAuthPage() {
 
   const handleRemoveTrustedDevice = async (deviceId: string) => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch(`/api/auth/2fa/trusted-device/${deviceId}`, {
         method: "DELETE"
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setTrustedDevices(trustedDevices.filter(d => d.id !== deviceId))
         toast({
@@ -268,15 +268,15 @@ export default function TwoFactorAuthPage() {
 
   const handleGenerateBackupCodes = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/2fa/backup-codes", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setBackupCodes(data.codes)
         setShowBackupCodes(true)
@@ -334,7 +334,7 @@ export default function TwoFactorAuthPage() {
                       <TabsTrigger value="login">Login</TabsTrigger>
                       <TabsTrigger value="verify">2FA Verify</TabsTrigger>
                     </TabsList>
-
+                    
                     <TabsContent value="login" className="space-y-4">
                       <div className="space-y-4">
                         <div>
@@ -357,8 +357,8 @@ export default function TwoFactorAuthPage() {
                             placeholder="Enter your password"
                           />
                         </div>
-                        <Button
-                          onClick={handleLogin}
+                        <Button 
+                          onClick={handleLogin} 
                           disabled={isProcessing}
                           className="w-full"
                         >
@@ -376,7 +376,7 @@ export default function TwoFactorAuthPage() {
                         </Button>
                       </div>
                     </TabsContent>
-
+                    
                     <TabsContent value="verify" className="space-y-4">
                       <div className="space-y-4">
                         <div>
@@ -399,7 +399,7 @@ export default function TwoFactorAuthPage() {
                             ))}
                           </div>
                         </div>
-
+                        
                         {selectedMethod === "totp" && (
                           <div>
                             <Label htmlFor="totp-code">TOTP Code</Label>
@@ -417,7 +417,7 @@ export default function TwoFactorAuthPage() {
                             <Progress value={(timeLeft / 30) * 100} className="mt-2" />
                           </div>
                         )}
-
+                        
                         {selectedMethod === "sms" && (
                           <div>
                             <Label htmlFor="sms-code">SMS Code</Label>
@@ -429,7 +429,7 @@ export default function TwoFactorAuthPage() {
                             />
                           </div>
                         )}
-
+                        
                         {selectedMethod === "email" && (
                           <div>
                             <Label htmlFor="email-code">Email Code</Label>
@@ -441,7 +441,7 @@ export default function TwoFactorAuthPage() {
                             />
                           </div>
                         )}
-
+                        
                         {selectedMethod === "backup" && (
                           <div>
                             <Label htmlFor="backup-code">Backup Code</Label>
@@ -455,13 +455,13 @@ export default function TwoFactorAuthPage() {
                             />
                           </div>
                         )}
-
-                        <Button
+                        
+                        <Button 
                           onClick={() => {
                             const codeInput = document.getElementById(
                               selectedMethod === "totp" ? "totp-code" :
-                                selectedMethod === "sms" ? "sms-code" :
-                                  selectedMethod === "email" ? "email-code" : "backup-code"
+                              selectedMethod === "sms" ? "sms-code" :
+                              selectedMethod === "email" ? "email-code" : "backup-code"
                             ) as HTMLInputElement
                             const code = codeInput?.value || backupCode
                             handleVerifyCode(code)
@@ -492,7 +492,7 @@ export default function TwoFactorAuthPage() {
                         You are successfully authenticated with 2FA!
                       </AlertDescription>
                     </Alert>
-
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Card>
                         <CardHeader>
@@ -507,7 +507,7 @@ export default function TwoFactorAuthPage() {
                           </div>
                         </CardContent>
                       </Card>
-
+                      
                       <Card>
                         <CardHeader>
                           <CardTitle className="text-lg">Method</CardTitle>
@@ -523,8 +523,8 @@ export default function TwoFactorAuthPage() {
                         </CardContent>
                       </Card>
                     </div>
-
-                    <Button
+                    
+                    <Button 
                       onClick={() => {
                         setIsAuthenticated(false)
                         setIs2FAEnabled(false)
@@ -574,8 +574,8 @@ export default function TwoFactorAuthPage() {
                         ))}
                       </div>
                     </div>
-
-                    <Button
+                    
+                    <Button 
                       onClick={handleEnable2FA}
                       disabled={isProcessing}
                       className="w-full"
@@ -601,8 +601,8 @@ export default function TwoFactorAuthPage() {
                         2FA is currently enabled with {selectedMethod} method
                       </AlertDescription>
                     </Alert>
-
-                    <Button
+                    
+                    <Button 
                       onClick={handleDisable2FA}
                       disabled={isProcessing}
                       variant="destructive"
@@ -633,7 +633,7 @@ export default function TwoFactorAuthPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button
+                <Button 
                   onClick={handleGenerateBackupCodes}
                   disabled={isProcessing}
                   variant="outline"
@@ -651,7 +651,7 @@ export default function TwoFactorAuthPage() {
                     </>
                   )}
                 </Button>
-
+                
                 {showBackupCodes && backupCodes.length > 0 && (
                   <div className="space-y-2">
                     <Alert>
@@ -686,7 +686,7 @@ export default function TwoFactorAuthPage() {
                     value={newDeviceName}
                     onChange={(e) => setNewDeviceName(e.target.value)}
                   />
-                  <Button
+                  <Button 
                     onClick={handleAddTrustedDevice}
                     disabled={isProcessing || !newDeviceName.trim()}
                     size="sm"
@@ -695,9 +695,9 @@ export default function TwoFactorAuthPage() {
                     Add Device
                   </Button>
                 </div>
-
+                
                 <Separator />
-
+                
                 <div className="space-y-2">
                   {trustedDevices.map((device) => (
                     <div key={device.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">

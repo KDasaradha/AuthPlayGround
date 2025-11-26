@@ -224,7 +224,7 @@ class SMSOTPAuth {
 
   // Format phone number
   formatPhoneNumber(phoneNumber, country) {
-    return \`\${country}\${phoneNumber.replace(/\\D/g, '')}\`;
+    return country + phoneNumber.replace(/[^0-9]/g, '');
   }
 }
 
@@ -527,7 +527,7 @@ async def cleanup_expired_otps(request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = `\`\`\`mermaid
+  const flowDiagram = ```mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -559,7 +559,7 @@ sequenceDiagram
         Server->>Client: 401 Unauthorized
         Client->>User: Show error message
     end
-\`\`\``
+```
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -807,7 +807,6 @@ sequenceDiagram
                     onChange={(value) => setOtp(value)}
                     maxLength={6}
                   />
-                  </InputOTP>
                 </div>
                 <Button 
                   onClick={handleVerifyOTP} 

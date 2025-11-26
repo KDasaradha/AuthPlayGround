@@ -9,16 +9,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import {
-  Globe,
-  Check,
-  X,
-  Key,
-  Shield,
-  ExternalLink,
-  RefreshCw,
-  Copy,
-  Eye,
+import { 
+  Globe, 
+  Check, 
+  X, 
+  Key, 
+  Shield, 
+  ExternalLink, 
+  RefreshCw, 
+  Copy, 
+  Eye, 
   EyeOff,
   Code,
   Settings,
@@ -55,22 +55,22 @@ export default function OAuth2Page() {
   ]
 
   const availableScopes = [
-    "profile", "email", "openid", "address", "phone",
+    "profile", "email", "openid", "address", "phone", 
     "read", "write", "admin", "offline_access"
   ]
 
   const handleGenerateCredentials = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/oauth2/credentials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider: selectedProvider })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setClientId(data.clientId)
         setClientSecret(data.clientSecret)
@@ -99,7 +99,7 @@ export default function OAuth2Page() {
 
   const handleAuthorize = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/oauth2/authorize", {
         method: "POST",
@@ -111,9 +111,9 @@ export default function OAuth2Page() {
           provider: selectedProvider
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setAuthCode(data.authCode)
         toast({
@@ -140,7 +140,7 @@ export default function OAuth2Page() {
 
   const handleExchangeToken = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/oauth2/token", {
         method: "POST",
@@ -153,9 +153,9 @@ export default function OAuth2Page() {
           grantType: "authorization_code"
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setAccessToken(data.accessToken)
         setRefreshToken(data.refreshToken)
@@ -185,7 +185,7 @@ export default function OAuth2Page() {
 
   const handleRefreshToken = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/oauth2/refresh", {
         method: "POST",
@@ -196,9 +196,9 @@ export default function OAuth2Page() {
           refreshToken
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setAccessToken(data.accessToken)
         setTokenInfo(data.tokenInfo)
@@ -226,18 +226,18 @@ export default function OAuth2Page() {
 
   const handleGetUserInfo = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/oauth2/userinfo", {
         method: "POST",
-        headers: {
+        headers: { 
           "Content-Type": "application/json",
           "Authorization": `Bearer ${accessToken}`
         }
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setUserInfo(data.userInfo)
         toast({
@@ -264,7 +264,7 @@ export default function OAuth2Page() {
 
   const handleRevokeToken = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/oauth2/revoke", {
         method: "POST",
@@ -275,9 +275,9 @@ export default function OAuth2Page() {
           token: accessToken
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setAccessToken("")
         setRefreshToken("")
@@ -315,8 +315,8 @@ export default function OAuth2Page() {
   }
 
   const toggleScope = (scope: string) => {
-    setScopes(prev =>
-      prev.includes(scope)
+    setScopes(prev => 
+      prev.includes(scope) 
         ? prev.filter(s => s !== scope)
         : [...prev, scope]
     )
@@ -355,7 +355,7 @@ export default function OAuth2Page() {
                     <TabsTrigger value="token">Token</TabsTrigger>
                     <TabsTrigger value="access">Access</TabsTrigger>
                   </TabsList>
-
+                  
                   <TabsContent value="setup" className="space-y-4">
                     <div className="space-y-4">
                       <div>
@@ -375,7 +375,7 @@ export default function OAuth2Page() {
                           ))}
                         </div>
                       </div>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="client-id">Client ID</Label>
@@ -395,7 +395,7 @@ export default function OAuth2Page() {
                             </Button>
                           </div>
                         </div>
-
+                        
                         <div>
                           <Label htmlFor="client-secret">Client Secret</Label>
                           <div className="flex gap-2">
@@ -416,7 +416,7 @@ export default function OAuth2Page() {
                           </div>
                         </div>
                       </div>
-
+                      
                       <div>
                         <Label htmlFor="redirect-uri">Redirect URI</Label>
                         <Input
@@ -426,7 +426,7 @@ export default function OAuth2Page() {
                           placeholder="https://yourapp.com/callback"
                         />
                       </div>
-
+                      
                       <div>
                         <Label>Scopes</Label>
                         <div className="grid grid-cols-3 gap-2 mt-2">
@@ -442,8 +442,8 @@ export default function OAuth2Page() {
                           ))}
                         </div>
                       </div>
-
-                      <Button
+                      
+                      <Button 
                         onClick={handleGenerateCredentials}
                         disabled={isProcessing}
                         className="w-full"
@@ -462,7 +462,7 @@ export default function OAuth2Page() {
                       </Button>
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="authorize" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -471,7 +471,7 @@ export default function OAuth2Page() {
                           Click authorize to simulate the OAuth2 authorization step
                         </AlertDescription>
                       </Alert>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label>Client ID</Label>
@@ -482,7 +482,7 @@ export default function OAuth2Page() {
                           <Input value={redirectUri} readOnly />
                         </div>
                       </div>
-
+                      
                       <div>
                         <Label>Selected Scopes</Label>
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -493,8 +493,8 @@ export default function OAuth2Page() {
                           ))}
                         </div>
                       </div>
-
-                      <Button
+                      
+                      <Button 
                         onClick={handleAuthorize}
                         disabled={isProcessing || !clientId || !redirectUri}
                         className="w-full"
@@ -511,7 +511,7 @@ export default function OAuth2Page() {
                           </>
                         )}
                       </Button>
-
+                      
                       {authCode && (
                         <div className="space-y-2">
                           <Label>Authorization Code</Label>
@@ -529,7 +529,7 @@ export default function OAuth2Page() {
                       )}
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="token" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -538,13 +538,13 @@ export default function OAuth2Page() {
                           Exchange authorization code for access token
                         </AlertDescription>
                       </Alert>
-
+                      
                       <div>
                         <Label>Authorization Code</Label>
                         <Input value={authCode} readOnly />
                       </div>
-
-                      <Button
+                      
+                      <Button 
                         onClick={handleExchangeToken}
                         disabled={isProcessing || !authCode}
                         className="w-full"
@@ -561,7 +561,7 @@ export default function OAuth2Page() {
                           </>
                         )}
                       </Button>
-
+                      
                       {accessToken && (
                         <div className="space-y-4">
                           <div>
@@ -577,7 +577,7 @@ export default function OAuth2Page() {
                               </Button>
                             </div>
                           </div>
-
+                          
                           {refreshToken && (
                             <div>
                               <Label>Refresh Token</Label>
@@ -593,8 +593,8 @@ export default function OAuth2Page() {
                               </div>
                             </div>
                           )}
-
-                          <Button
+                          
+                          <Button 
                             onClick={handleRefreshToken}
                             disabled={isProcessing || !refreshToken}
                             variant="outline"
@@ -616,7 +616,7 @@ export default function OAuth2Page() {
                       )}
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="access" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -625,9 +625,9 @@ export default function OAuth2Page() {
                           Use access token to fetch user information
                         </AlertDescription>
                       </Alert>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Button
+                        <Button 
                           onClick={handleGetUserInfo}
                           disabled={isProcessing || !accessToken}
                           className="w-full"
@@ -644,8 +644,8 @@ export default function OAuth2Page() {
                             </>
                           )}
                         </Button>
-
-                        <Button
+                        
+                        <Button 
                           onClick={handleRevokeToken}
                           disabled={isProcessing || !accessToken}
                           variant="destructive"
@@ -664,7 +664,7 @@ export default function OAuth2Page() {
                           )}
                         </Button>
                       </div>
-
+                      
                       {userInfo && (
                         <div className="space-y-4">
                           <Label>User Information</Label>
@@ -723,7 +723,7 @@ export default function OAuth2Page() {
                     {isConnected ? "Connected" : "Disconnected"}
                   </Badge>
                 </div>
-
+                
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span>Provider</span>
@@ -732,21 +732,21 @@ export default function OAuth2Page() {
                       {providers.find(p => p.id === selectedProvider)?.name}
                     </span>
                   </div>
-
+                  
                   <div className="flex items-center justify-between">
                     <span>Client ID</span>
                     <span className="text-sm font-mono truncate max-w-[100px]">
                       {clientId || "Not set"}
                     </span>
                   </div>
-
+                  
                   <div className="flex items-center justify-between">
                     <span>Access Token</span>
                     <span className="text-sm font-mono truncate max-w-[100px]">
                       {accessToken ? "••••••••" : "None"}
                     </span>
                   </div>
-
+                  
                   <div className="flex items-center justify-between">
                     <span>Refresh Token</span>
                     <span className="text-sm font-mono truncate max-w-[100px]">
@@ -775,7 +775,7 @@ export default function OAuth2Page() {
                       <p className="text-sm text-gray-500">Get client credentials</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${authCode ? 'bg-green-500' : 'bg-gray-300'}`}>
                       2
@@ -785,7 +785,7 @@ export default function OAuth2Page() {
                       <p className="text-sm text-gray-500">Get authorization code</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${accessToken ? 'bg-green-500' : 'bg-gray-300'}`}>
                       3
@@ -795,7 +795,7 @@ export default function OAuth2Page() {
                       <p className="text-sm text-gray-500">Code for access token</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${userInfo ? 'bg-green-500' : 'bg-gray-300'}`}>
                       4
@@ -822,12 +822,12 @@ export default function OAuth2Page() {
                     <p className="font-medium text-blue-900">Authorization Code</p>
                     <p className="text-sm text-blue-700">Most secure, recommended for web apps</p>
                   </div>
-
+                  
                   <div className="p-3 bg-green-50 rounded-lg">
                     <p className="font-medium text-green-900">Client Credentials</p>
                     <p className="text-sm text-green-700">For service-to-service communication</p>
                   </div>
-
+                  
                   <div className="p-3 bg-purple-50 rounded-lg">
                     <p className="font-medium text-purple-900">Refresh Token</p>
                     <p className="text-sm text-purple-700">Get new access tokens</p>

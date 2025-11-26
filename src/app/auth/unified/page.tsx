@@ -13,10 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import {
-  UserPlus,
-  Shield,
-  Key,
+import { 
+  UserPlus, 
+  Shield, 
+  Key, 
   Lock,
   Unlock,
   Plus,
@@ -258,7 +258,7 @@ export default function UnifiedAuthPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMethod)
       })
-
+      
       if (response.ok) {
         await loadAuthMethods()
         setIsCreateMethodDialogOpen(false)
@@ -279,7 +279,7 @@ export default function UnifiedAuthPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUser)
       })
-
+      
       if (response.ok) {
         await loadUsers()
         setIsCreateUserDialogOpen(false)
@@ -297,7 +297,7 @@ export default function UnifiedAuthPage() {
       const response = await fetch(`/api/auth/unified/methods/${methodId}`, {
         method: "DELETE"
       })
-
+      
       if (response.ok) {
         await loadAuthMethods()
       }
@@ -311,7 +311,7 @@ export default function UnifiedAuthPage() {
       const response = await fetch(`/api/auth/unified/users/${userId}`, {
         method: "DELETE"
       })
-
+      
       if (response.ok) {
         await loadUsers()
       }
@@ -327,7 +327,7 @@ export default function UnifiedAuthPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ enabled })
       })
-
+      
       if (response.ok) {
         await loadAuthMethods()
       }
@@ -432,7 +432,7 @@ export default function UnifiedAuthPage() {
         <div className="mb-6">
           <BackButton />
         </div>
-
+        
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-indigo-600 rounded-xl">

@@ -9,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import {
-  Building,
-  Check,
-  X,
-  Key,
-  Shield,
-  FileText,
+import { 
+  Building, 
+  Check, 
+  X, 
+  Key, 
+  Shield, 
+  FileText, 
   Globe,
   RefreshCw,
   Info,
@@ -72,7 +72,7 @@ export default function SAMLPage() {
 
   const handleConfigureSAML = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/saml/configure", {
         method: "POST",
@@ -88,9 +88,9 @@ export default function SAMLPage() {
           attributes
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setIsConfigured(true)
         toast({
@@ -117,7 +117,7 @@ export default function SAMLPage() {
 
   const handleGenerateSAMLRequest = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/saml/request", {
         method: "POST",
@@ -128,9 +128,9 @@ export default function SAMLPage() {
           attributes
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setSamlRequest(data.samlRequest)
         toast({
@@ -157,7 +157,7 @@ export default function SAMLPage() {
 
   const handleProcessSAMLResponse = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/saml/response", {
         method: "POST",
@@ -167,9 +167,9 @@ export default function SAMLPage() {
           certificate
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setIsAuthenticated(true)
         setUserInfo(data.userInfo)
@@ -198,7 +198,7 @@ export default function SAMLPage() {
 
   const handleInitiateSLO = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/saml/logout", {
         method: "POST",
@@ -208,9 +208,9 @@ export default function SAMLPage() {
           sloUrl
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         setIsAuthenticated(false)
         setUserInfo(null)
@@ -238,7 +238,7 @@ export default function SAMLPage() {
 
   const handleGenerateMetadata = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/auth/saml/metadata", {
         method: "POST",
@@ -250,9 +250,9 @@ export default function SAMLPage() {
           certificate
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         // Download metadata file
         const blob = new Blob([data.metadata], { type: 'application/xml' })
@@ -262,7 +262,7 @@ export default function SAMLPage() {
         a.download = 'saml-metadata.xml'
         a.click()
         URL.revokeObjectURL(url)
-
+        
         toast({
           title: "Metadata Generated",
           description: "SAML metadata file downloaded"
@@ -286,8 +286,8 @@ export default function SAMLPage() {
   }
 
   const toggleAttribute = (attrName: string) => {
-    setAttributes(prev =>
-      prev.includes(attrName)
+    setAttributes(prev => 
+      prev.includes(attrName) 
         ? prev.filter(a => a !== attrName)
         : [...prev, attrName]
     )
@@ -326,7 +326,7 @@ export default function SAMLPage() {
                     <TabsTrigger value="response">Response</TabsTrigger>
                     <TabsTrigger value="metadata">Metadata</TabsTrigger>
                   </TabsList>
-
+                  
                   <TabsContent value="configure" className="space-y-4">
                     <div className="space-y-4">
                       <div>
@@ -349,7 +349,7 @@ export default function SAMLPage() {
                           ))}
                         </div>
                       </div>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="sp-entity-id">SP Entity ID</Label>
@@ -370,7 +370,7 @@ export default function SAMLPage() {
                           />
                         </div>
                       </div>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="acs-url">ACS URL</Label>
@@ -391,7 +391,7 @@ export default function SAMLPage() {
                           />
                         </div>
                       </div>
-
+                      
                       <div>
                         <Label htmlFor="certificate">X.509 Certificate</Label>
                         <div className="flex gap-2">
@@ -412,7 +412,7 @@ export default function SAMLPage() {
                           </Button>
                         </div>
                       </div>
-
+                      
                       <div>
                         <Label htmlFor="private-key">Private Key</Label>
                         <div className="flex gap-2">
@@ -433,7 +433,7 @@ export default function SAMLPage() {
                           </Button>
                         </div>
                       </div>
-
+                      
                       <div>
                         <Label>SAML Attributes</Label>
                         <div className="grid grid-cols-2 gap-2 mt-2">
@@ -451,8 +451,8 @@ export default function SAMLPage() {
                           ))}
                         </div>
                       </div>
-
-                      <Button
+                      
+                      <Button 
                         onClick={handleConfigureSAML}
                         disabled={isProcessing}
                         className="w-full"
@@ -471,7 +471,7 @@ export default function SAMLPage() {
                       </Button>
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="request" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -480,9 +480,9 @@ export default function SAMLPage() {
                           Generate a SAML authentication request to send to the Identity Provider
                         </AlertDescription>
                       </Alert>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Button
+                        <Button 
                           onClick={handleGenerateSAMLRequest}
                           disabled={isProcessing || !spEntityId || !acsUrl}
                           className="w-full"
@@ -499,8 +499,8 @@ export default function SAMLPage() {
                             </>
                           )}
                         </Button>
-
-                        <Button
+                        
+                        <Button 
                           onClick={() => {
                             if (samlRequest) {
                               navigator.clipboard.writeText(samlRequest)
@@ -518,7 +518,7 @@ export default function SAMLPage() {
                           Copy Request
                         </Button>
                       </div>
-
+                      
                       {samlRequest && (
                         <div className="space-y-2">
                           <Label>SAML Request (Base64)</Label>
@@ -531,7 +531,7 @@ export default function SAMLPage() {
                       )}
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="response" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -540,7 +540,7 @@ export default function SAMLPage() {
                           Process a SAML response received from the Identity Provider
                         </AlertDescription>
                       </Alert>
-
+                      
                       <div>
                         <Label htmlFor="saml-response">SAML Response</Label>
                         <textarea
@@ -551,8 +551,8 @@ export default function SAMLPage() {
                           className="w-full h-32 p-3 border rounded-md font-mono text-sm"
                         />
                       </div>
-
-                      <Button
+                      
+                      <Button 
                         onClick={handleProcessSAMLResponse}
                         disabled={isProcessing || !samlResponse}
                         className="w-full"
@@ -569,7 +569,7 @@ export default function SAMLPage() {
                           </>
                         )}
                       </Button>
-
+                      
                       {isAuthenticated && userInfo && (
                         <div className="space-y-4">
                           <Alert>
@@ -578,7 +578,7 @@ export default function SAMLPage() {
                               SAML authentication successful! User attributes extracted.
                             </AlertDescription>
                           </Alert>
-
+                          
                           <Card>
                             <CardHeader>
                               <CardTitle className="text-lg">User Attributes</CardTitle>
@@ -598,7 +598,7 @@ export default function SAMLPage() {
                       )}
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="metadata" className="space-y-4">
                     <div className="space-y-4">
                       <Alert>
@@ -607,9 +607,9 @@ export default function SAMLPage() {
                           Generate SAML metadata XML file for your Service Provider
                         </AlertDescription>
                       </Alert>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Button
+                        <Button 
                           onClick={handleGenerateMetadata}
                           disabled={isProcessing || !spEntityId || !acsUrl}
                           className="w-full"
@@ -626,8 +626,8 @@ export default function SAMLPage() {
                             </>
                           )}
                         </Button>
-
-                        <Button
+                        
+                        <Button 
                           onClick={() => {
                             window.open('/saml-metadata.xml', '_blank')
                           }}
@@ -639,7 +639,7 @@ export default function SAMLPage() {
                           Preview Metadata
                         </Button>
                       </div>
-
+                      
                       <div className="p-4 bg-gray-50 rounded-lg">
                         <h4 className="font-medium mb-2">Metadata Information</h4>
                         <div className="space-y-1 text-sm">
@@ -672,19 +672,19 @@ export default function SAMLPage() {
                     {isAuthenticated ? "Authenticated" : "Not Authenticated"}
                   </Badge>
                 </div>
-
+                
                 <div className="flex items-center justify-between">
                   <span>Configuration</span>
                   <Badge variant={isConfigured ? "default" : "secondary"}>
                     {isConfigured ? "Configured" : "Not Configured"}
                   </Badge>
                 </div>
-
+                
                 <div className="flex items-center justify-between">
                   <span>Provider</span>
                   <span className="font-mono text-sm">{selectedProvider}</span>
                 </div>
-
+                
                 <div className="flex items-center justify-between">
                   <span>Attributes</span>
                   <span className="font-mono text-sm">{attributes.length}</span>
@@ -708,7 +708,7 @@ export default function SAMLPage() {
                       <p className="text-sm text-gray-600">One login for multiple applications</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -716,7 +716,7 @@ export default function SAMLPage() {
                       <p className="text-sm text-gray-600">Integrates with corporate IdPs</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -724,7 +724,7 @@ export default function SAMLPage() {
                       <p className="text-sm text-gray-600">Industry-standard protocol</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -782,7 +782,7 @@ export default function SAMLPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button
+                  <Button 
                     onClick={handleInitiateSLO}
                     disabled={isProcessing}
                     variant="outline"

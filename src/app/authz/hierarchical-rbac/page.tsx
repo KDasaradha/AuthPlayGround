@@ -9,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import {
-  GitBranch,
-  Check,
-  X,
-  Users,
-  User,
-  Shield,
+import { 
+  GitBranch, 
+  Check, 
+  X, 
+  Users, 
+  User, 
+  Shield, 
   Crown,
   UserPlus,
   UserCheck,
@@ -163,7 +163,7 @@ export default function HierarchicalRBACPage() {
 
   const handleCreateRole = async () => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/authz/hierarchical-rbac/role", {
         method: "POST",
@@ -175,9 +175,9 @@ export default function HierarchicalRBACPage() {
           permissions: selectedPermissions
         })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         const newRole: Role = {
           id: data.role.id,
@@ -217,18 +217,18 @@ export default function HierarchicalRBACPage() {
 
   const handleAssignRole = async (userId: string, roleId: string) => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/authz/hierarchical-rbac/assign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, roleId })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
-        setUsers(users.map(user =>
+        setUsers(users.map(user => 
           user.id === userId ? { ...user, role: roleId } : user
         ))
         toast({
@@ -255,16 +255,16 @@ export default function HierarchicalRBACPage() {
 
   const handleCheckPermission = async (userId: string, permission: string) => {
     setIsProcessing(true)
-
+    
     try {
       const response = await fetch("/api/authz/hierarchical-rbac/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, permission })
       })
-
+      
       const data = await response.json()
-
+      
       if (data.success) {
         toast({
           title: "Permission Check",
@@ -292,30 +292,30 @@ export default function HierarchicalRBACPage() {
   const getRoleHierarchy = () => {
     const hierarchy: Role[] = []
     const visited = new Set<string>()
-
+    
     const buildHierarchy = (role: Role, level: number = 0) => {
       if (visited.has(role.id)) return
       visited.add(role.id)
-
+      
       hierarchy.push({ ...role, level })
-
+      
       const children = roles.filter(r => r.parent === role.id)
       children.forEach(child => buildHierarchy(child, level + 1))
     }
-
+    
     const rootRoles = roles.filter(r => !r.parent)
     rootRoles.forEach(role => buildHierarchy(role))
-
+    
     return hierarchy
   }
 
   const getEffectivePermissions = (roleId: string): string[] => {
     const role = roles.find(r => r.id === roleId)
     if (!role) return []
-
+    
     let permissions = [...role.permissions]
     let currentRole = role
-
+    
     // Inherit permissions from parent roles
     while (currentRole.parent) {
       const parentRole = roles.find(r => r.id === currentRole.parent)
@@ -326,13 +326,13 @@ export default function HierarchicalRBACPage() {
         break
       }
     }
-
+    
     return [...new Set(permissions)]
   }
 
   const togglePermission = (permissionId: string) => {
-    setSelectedPermissions(prev =>
-      prev.includes(permissionId)
+    setSelectedPermissions(prev => 
+      prev.includes(permissionId) 
         ? prev.filter(p => p !== permissionId)
         : [...prev, permissionId]
     )
@@ -373,26 +373,27 @@ export default function HierarchicalRBACPage() {
                     <TabsTrigger value="users">Users</TabsTrigger>
                     <TabsTrigger value="permissions">Permissions</TabsTrigger>
                   </TabsList>
-
+                  
                   <TabsContent value="hierarchy" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Role Hierarchy</h3>
                       <div className="space-y-2">
                         {roleHierarchy.map((role) => (
-                          <div
-                            key={role.id}
+                          <div 
+                            key={role.id} 
                             className="flex items-center gap-3 p-3 bg-white rounded-lg border hover:shadow-md transition-shadow"
                             style={{ marginLeft: `${role.level * 24}px` }}
                           >
                             <div className="flex items-center gap-2">
                               {role.level === 0 && <Crown className="h-5 w-5 text-yellow-500" />}
                               {role.level > 0 && <ArrowDown className="h-4 w-4 text-gray-400" />}
-                              <div className={`p-2 rounded-lg ${role.level === 0 ? 'bg-yellow-100' :
-                                  role.level === 1 ? 'bg-red-100' :
-                                    role.level === 2 ? 'bg-blue-100' :
-                                      role.level === 3 ? 'bg-green-100' :
-                                        'bg-gray-100'
-                                }`}>
+                              <div className={`p-2 rounded-lg ${
+                                role.level === 0 ? 'bg-yellow-100' :
+                                role.level === 1 ? 'bg-red-100' :
+                                role.level === 2 ? 'bg-blue-100' :
+                                role.level === 3 ? 'bg-green-100' :
+                                'bg-gray-100'
+                              }`}>
                                 <Users className="h-5 w-5" />
                               </div>
                               <div>
@@ -416,7 +417,7 @@ export default function HierarchicalRBACPage() {
                       </div>
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="roles" className="space-y-4">
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -430,19 +431,20 @@ export default function HierarchicalRBACPage() {
                           Create Role
                         </Button>
                       </div>
-
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {roles.map((role) => (
                           <Card key={role.id} className="hover:shadow-md transition-shadow">
                             <CardContent className="pt-6">
                               <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                  <div className={`p-2 rounded-lg ${role.level === 0 ? 'bg-yellow-100' :
-                                      role.level === 1 ? 'bg-red-100' :
-                                        role.level === 2 ? 'bg-blue-100' :
-                                          role.level === 3 ? 'bg-green-100' :
-                                            'bg-gray-100'
-                                    }`}>
+                                  <div className={`p-2 rounded-lg ${
+                                    role.level === 0 ? 'bg-yellow-100' :
+                                    role.level === 1 ? 'bg-red-100' :
+                                    role.level === 2 ? 'bg-blue-100' :
+                                    role.level === 3 ? 'bg-green-100' :
+                                    'bg-gray-100'
+                                  }`}>
                                     <Users className="h-5 w-5" />
                                   </div>
                                   <div>
@@ -458,7 +460,7 @@ export default function HierarchicalRBACPage() {
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               </div>
-
+                              
                               <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
                                   <span>Level:</span>
@@ -485,7 +487,7 @@ export default function HierarchicalRBACPage() {
                       </div>
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="users" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">User Management</h3>
@@ -522,7 +524,7 @@ export default function HierarchicalRBACPage() {
                       </div>
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="permissions" className="space-y-4">
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Permission Catalog</h3>
@@ -564,7 +566,7 @@ export default function HierarchicalRBACPage() {
                       <p className="text-sm text-gray-600">Multi-level role structure</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -572,7 +574,7 @@ export default function HierarchicalRBACPage() {
                       <p className="text-sm text-gray-600">Child roles inherit parent permissions</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -580,7 +582,7 @@ export default function HierarchicalRBACPage() {
                       <p className="text-sm text-gray-600">Users get minimum required access</p>
                     </div>
                   </div>
-
+                  
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -645,14 +647,14 @@ export default function HierarchicalRBACPage() {
                       Hierarchical RBAC prevents privilege escalation
                     </AlertDescription>
                   </Alert>
-
+                  
                   <Alert>
                     <Lock className="h-4 w-4" />
                     <AlertDescription>
                       Clear separation of duties and responsibilities
                     </AlertDescription>
                   </Alert>
-
+                  
                   <Alert>
                     <Lock className="h-4 w-4" />
                     <AlertDescription>

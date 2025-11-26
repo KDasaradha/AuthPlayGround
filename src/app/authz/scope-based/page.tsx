@@ -13,10 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import {
-  Target,
-  Shield,
-  Key,
+import { 
+  Target, 
+  Shield, 
+  Key, 
   Lock,
   Unlock,
   Plus,
@@ -210,7 +210,7 @@ export default function ScopeBasedPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newScope)
       })
-
+      
       if (response.ok) {
         await loadScopes()
         setIsCreateScopeDialogOpen(false)
@@ -231,7 +231,7 @@ export default function ScopeBasedPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newClient)
       })
-
+      
       if (response.ok) {
         await loadClients()
         setIsCreateClientDialogOpen(false)
@@ -252,7 +252,7 @@ export default function ScopeBasedPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(testRequest)
       })
-
+      
       if (response.ok) {
         const data = await response.json()
         setTestResult(data)
@@ -270,7 +270,7 @@ export default function ScopeBasedPage() {
       const response = await fetch(`/api/authz/scope-based/scopes/${scopeId}`, {
         method: "DELETE"
       })
-
+      
       if (response.ok) {
         await loadScopes()
       }
@@ -284,7 +284,7 @@ export default function ScopeBasedPage() {
       const response = await fetch(`/api/authz/scope-based/clients/${clientId}`, {
         method: "DELETE"
       })
-
+      
       if (response.ok) {
         await loadClients()
       }
@@ -376,7 +376,7 @@ export default function ScopeBasedPage() {
         <div className="mb-6">
           <BackButton />
         </div>
-
+        
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-teal-600 rounded-xl">
@@ -605,9 +605,9 @@ export default function ScopeBasedPage() {
                           id="scope-expires"
                           type="number"
                           value={newScope.expires_in || ""}
-                          onChange={(e) => setNewScope(prev => ({
-                            ...prev,
-                            expires_in: e.target.value ? parseInt(e.target.value) : undefined
+                          onChange={(e) => setNewScope(prev => ({ 
+                            ...prev, 
+                            expires_in: e.target.value ? parseInt(e.target.value) : undefined 
                           }))}
                           placeholder="3600 (1 hour)"
                         />

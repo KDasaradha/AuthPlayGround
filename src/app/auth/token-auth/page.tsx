@@ -9,10 +9,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import {
-  KeyRound,
-  AlertTriangle,
-  CheckCircle,
+import { 
+  KeyRound, 
+  AlertTriangle, 
+  CheckCircle, 
   ArrowRight,
   Code,
   BookOpen,
@@ -37,7 +37,7 @@ export default function TokenAuthPage() {
   const handleGenerateToken = async () => {
     setIsLoading(true)
     setResult(null)
-
+    
     try {
       const response = await fetch('/api/auth/token-auth/generate', {
         method: 'POST',
@@ -46,10 +46,10 @@ export default function TokenAuthPage() {
         },
         body: JSON.stringify({ username, password }),
       })
-
+      
       const data = await response.json()
       setResult(data)
-
+      
       if (data.success) {
         setGeneratedToken(data.data.token)
         setToken(data.data.token)
@@ -69,7 +69,7 @@ export default function TokenAuthPage() {
 
     setIsLoading(true)
     setResult(null)
-
+    
     try {
       const response = await fetch('/api/auth/token-auth/validate', {
         method: 'POST',
@@ -79,7 +79,7 @@ export default function TokenAuthPage() {
         },
         body: JSON.stringify({}),
       })
-
+      
       const data = await response.json()
       setResult(data)
     } catch (error) {
@@ -406,9 +406,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return {
         "user_id": token_data["user_id"],
         "username": token_data["username"]
-    }`
+    }
+```
 
-  const flowDiagram: string = `sequenceDiagram
+  const flowDiagram = ```mermaid
+sequenceDiagram
     participant Client
     participant Browser
     participant Server
@@ -439,7 +441,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     Server->>TokenStore: Validate token
     TokenStore->>Server: Return validation result
     Server->>Browser: 200 OK + validation result
-    Browser->>Client: Display validation status`
+    Browser->>Client: Display validation status
+```
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -486,7 +489,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Token authentication uses bearer tokens sent in Authorization headers.
+                  Token authentication uses bearer tokens sent in Authorization headers. 
                   Tokens are generated upon login and validated on each request.
                 </p>
               </CardContent>
@@ -542,7 +545,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Tokens should be transmitted securely over HTTPS and stored safely.
+              <strong>Security Note:</strong> Tokens should be transmitted securely over HTTPS and stored safely. 
               Implement proper token expiration and refresh mechanisms.
             </AlertDescription>
           </Alert>
@@ -556,7 +559,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             </CardHeader>
             <CardContent>
               <div className="prose dark:prose-invert max-w-none">
-                <ReactMarkdown>{`\`\`\`mermaid\n${flowDiagram}\n\`\`\``}</ReactMarkdown>
+                <ReactMarkdown>{flowDiagram}</ReactMarkdown>
               </div>
             </CardContent>
           </Card>
@@ -631,8 +634,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
                       placeholder="Enter password"
                     />
                   </div>
-                  <Button
-                    onClick={handleGenerateToken}
+                  <Button 
+                    onClick={handleGenerateToken} 
                     disabled={isLoading || !username || !password}
                     className="w-full"
                   >
@@ -695,8 +698,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
                     placeholder="Enter token to validate"
                     className="flex-1"
                   />
-                  <Button
-                    onClick={handleValidateToken}
+                  <Button 
+                    onClick={handleValidateToken} 
                     disabled={isLoading || !token}
                   >
                     {isLoading ? 'Validating...' : 'Validate Token'}
@@ -836,7 +839,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
                     Prevention: Secure storage, HTTPS, input validation
                   </p>
                 </div>
-
+                
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Token Replay</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -846,7 +849,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
                     Prevention: Short expiration, one-time use tokens, nonce
                   </p>
                 </div>
-
+                
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Token Brute Force</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">

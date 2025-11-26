@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists
-    const user = users[email as keyof typeof users
+    const user = users[email as keyof typeof users]
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'User not found' },
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
         expiresAt
         email: email.substring(0, 3) + '***@***.com',
         otp,
-        expiresAt: new Date(Date.now() + TOTP_TIME_STEP)
+        expiresAt: new Date(Date.now() + TOTP_TIME_STEP * 1000)
       }
     })
     } catch (error) {
