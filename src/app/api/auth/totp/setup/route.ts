@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
+import * as speakeasy from 'speakeasy'
+import * as QRCode from 'qrcode'
 
 // Mock user database for simulation
 const users = {
@@ -17,20 +19,20 @@ const totpSecrets = new Map<string, {
   secret: string
   expiresAt: Date
   createdAt: Date
-  lastUsedAt: Date
+  lastUsedAt?: Date
 }>()
 
 // TOTP time step (30 seconds)
 const TOTP_TIME_STEP = 30
 
 function generateTOTPSecret(): string {
-  return randomBytes(20).toString('hex')
+  return speakeasy.generateSecret({ length: 20 }).base32
 }
 
-function generateBackupCodes(secret: string, count: number = 10): string[] {
-  const codes = []
+function generateBackupCodes(count: number = 10): string[] {
+  const codes: string[] = []
   for (let i = 0; i < count; i++) {
-    codes.push(generateTOTPSecret())
+    codes.push(randomBytes(8).toString('hex'))
   }
   return codes
 }
@@ -44,73 +46,111 @@ function cleanupExpiredSecrets() {
   }
 }
 
-function isRateLimited(email: string): boolean {
-  const emailLinks = Array.from(totpSecrets.values()).filter(link => link.email === email)
-  const recentLinks = emailLinks.filter(link => 
-    (Date.now() - link.sentAt) < 60000) // 1 minute
-  const attempts = recentLinks.length >= 3
-  return recentLinks.length >= 5
-}
-
-function generateMagicLinkUrl(token: string, baseUrl = 'https://yourapp.com') {
-  return `${baseUrl}/auth/totp/verify?token=${token}`
-}
-
-function verifyMagicLink(token: string): boolean {
-  const magicLinkData = totpSecrets.get(token)
+export async function POST(request: NextRequest) {
+  try {
+    // Cleanup expired secrets
+    cleanupExpiredSecrets()
     
-  if (!magicLinkData || magicLinkData.expiresAt < new Date()) {
-    return false
-  }
-  
-  // Check if magic link is expired
-  if (magicLinkData["expiresAt"] < new Date()) {
-    return false
-  }
-  
-  // Mark magic link as used
-    magicLinkData.used = true
-    magicLinkStore.delete(token)
-  }
+    const { userId, username } = await request.json()
 
-  // Get user
-  const user = users[magicLinkData.email as keyof typeof users]
-    if (!user) {
-      return null
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'User ID is required' },
+        { status: 400 }
+      )
     }
-  
-  // Generate session token
-  const sessionToken = randomBytes(32).toString('hex')
 
-  return {
-    success: true,
-    message: 'Magic link verified successfully',
-    token: sessionToken,
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.email
-    }
-  }
+    // Generate TOTP secret
+    const secret = generateTOTPSecret()
+    const token = randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
 
-  // Clean up used magic link
-  magicLinkStore.delete(token)
-  console.log(`Magic link verified for user: ${user.username}`)
-  return NextResponse.json({
+    // Store TOTP secret
+    totpSecrets.set(token, {
+      userId,
+      secret,
+      expiresAt,
+      createdAt: new Date()
+    })
+
+    // Generate QR code for authenticator apps
+    const otpauthUrl = speakeasy.otpauthURL({
+      secret,
+      label: username || userId,
+      issuer: 'AuthPlayGround'
+    })
+
+    const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl)
+
+    // Generate backup codes
+    const backupCodes = generateBackupCodes(10)
+
+    console.log(`TOTP setup initiated for user: ${userId}`)
+
+    return NextResponse.json({
       success: true,
-      message: 'Magic link verified successfully',
+      message: 'TOTP setup initiated successfully',
       data: {
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email
-        }
+        token,
+        secret,
+        qrCode: qrCodeDataUrl,
+        backupCodes,
+        expiresAt
       }
-    }
+    })
   } catch (error) {
-    console.error('Magic link verify error:', error)
+    console.error('TOTP setup error:', error)
     return NextResponse.json(
-      success: false, message: 'Internal server error' },
+      { success: false, message: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    // Cleanup expired secrets
+    cleanupExpiredSecrets()
+    
+    const token = request.nextUrl.searchParams.get('token')
+    
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: 'Token is required' },
+        { status: 400 }
+      )
+    }
+
+    const totpData = totpSecrets.get(token)
+    
+    if (!totpData) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid or expired token' },
+        { status: 404 }
+      )
+    }
+
+    // Check if expired
+    if (totpData.expiresAt < new Date()) {
+      totpSecrets.delete(token)
+      return NextResponse.json(
+        { success: false, message: 'Token has expired' },
+        { status: 401 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        userId: totpData.userId,
+        secret: totpData.secret,
+        expiresAt: totpData.expiresAt
+      }
+    })
+  } catch (error) {
+    console.error('TOTP get error:', error)
+    return NextResponse.json(
+      { success: false, message: 'Internal server error' },
       { status: 500 }
     )
   }

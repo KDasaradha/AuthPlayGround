@@ -22,7 +22,7 @@ const users = {
   }
 }
 
-// TOTP expiration time (30 minutes)
+// TOTP expiration time (30 seconds)
 const TOTP_TIME_STEP = 30
 
 function generateTOTPSecret(): string {
@@ -31,9 +31,9 @@ function generateTOTPSecret(): string {
 
 function cleanupExpiredSecrets() {
   const now = new Date()
-  for (const [token, secret_data] of totpSecrets.entries()) {
+  for (const [token, secret_data] of totpStore.entries()) {
     if (secret_data["expiresAt"] < now) {
-      totpSecrets.delete(token)
+      totpStore.delete(token)
     }
   }
 }
@@ -42,10 +42,8 @@ function isRateLimited(email: string): boolean {
   const emailLinks = Array.from(totpStore.values()).filter(link => link.email === email)
   const recentLinks = emailLinks.filter(link => 
     (Date.now() - link.sentAt) < 60000) // 1 minute
-  const attempts = recentLinks.length >= 3
-    return recentLinks.length >= 5
-    return recentLinks.length >= 5
-  }
+  return recentLinks.length >= 5
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -78,15 +76,25 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
-    const otp = generateTOTPSecret()
-    const expiresAt = new Date(Date.now() + TOTP_TIME_STEP)
+
+    const generatedOtp = generateTOTPSecret()
+    const expiresAt = new Date(Date.now() + TOTP_TIME_STEP * 1000)
     const token = randomBytes(32).toString('hex')
     
     // Store TOTP
-    magicLinkUrl = `https://yourapp.com/auth/totp/verify?token=\${token}`
+    const magicLinkUrl = `https://yourapp.com/auth/totp/verify?token=${token}`
+    
+    totpStore.set(token, {
+      email,
+      otp: generatedOtp,
+      expiresAt,
+      used: false,
+      attempts: 0,
+      sentAt: Date.now()
+    })
     
     // In production, send real email
-    console.log(`OTP for ${email}: ${otp} (expiresAt.toISOString()})`)
+    console.log(`OTP for ${email}: ${generatedOtp} (${expiresAt.toISOString()})`)
 
     // Simulate email sending delay
     await new Promise(resolve => setTimeout(resolve, 1000))
@@ -97,19 +105,17 @@ export async function POST(request: NextRequest) {
       data: {
         token,
         magicLinkUrl,
-        expiresAt
+        expiresAt,
         email: email.substring(0, 3) + '***@***.com',
-        otp,
-        expiresAt: new Date(Date.now() + TOTP_TIME_STEP * 1000)
+        otp: generatedOtp
       }
     })
-    } catch (error) {
-      console.error('Email OTP send error:', error)
-      return NextResponse.json(
-        success: false, message: 'Internal server error' },
-        { status: 500 }
-      )
-    }
+  } catch (error) {
+    console.error('Email OTP send error:', error)
+    return NextResponse.json(
+      { success: false, message: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
@@ -118,7 +124,7 @@ export async function GET(request: NextRequest) {
     // Cleanup expired TOTPs
     cleanupExpiredSecrets()
     
-    const token = request.query_params.get('token')
+    const token = request.nextUrl.searchParams.get('token')
     
     if (!token) {
       return NextResponse.json(
@@ -128,19 +134,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Find valid TOTP for this token
-    const totpSecrets.get(token)
+    const totpSecret = totpStore.get(token)
     
     if (!totpSecret) {
       return NextResponse.json(
-        success: false, message: 'Invalid or expired TOTP' },
+        { success: false, message: 'Invalid or expired TOTP' },
         { status: 401 }
       )
+    }
     
     // Check if TOTP is expired
     if (totpSecret["expiresAt"] < new Date()) {
-      totpSecrets.delete(token)
+      totpStore.delete(token)
       return NextResponse.json(
-        success: false, message: 'OTP has expired' },
+        { success: false, message: 'OTP has expired' },
         { status: 401 }
       )
     }
@@ -148,7 +155,7 @@ export async function GET(request: NextRequest) {
     // Check if TOTP is already used
     if (totpSecret["used"]) {
       return NextResponse.json(
-        success: false, message: 'OTP has already been used' },
+        { success: false, message: 'OTP has already been used' },
         { status: 401 }
       )
     }
@@ -156,98 +163,7 @@ export async function GET(request: NextRequest) {
     // Check attempts limit
     if (totpSecret["attempts"] >= 3) {
       return NextResponse.json(
-        success: false, message: 'Too many OTP requests. Please wait before trying again.' },
-        { status: 429 }
-      )
-    }
-
-    // Increment attempts
-    totpSecret["attempts"] += 1
-
-    // Update last accessed time
-    totpSecret["lastAccessed"] = new Date()
-    totpSecrets.set(token, {
-      userId: totpSecret["userId"],
-      lastAccessed: new Date()
-    }
-
-    // Generate session token
-    const sessionToken = randomBytes(32).toString('hex')
-
-    console.log(`TOTP verification successful for user: ${totpSecret["userId"]}`)
-
-    return NextResponse.json({
-      success: true,
-      message: 'OTP verified successfully',
-      data: {
-        user: {
-          id: totpSecret["userId"],
-          username: users_db[totpSecret["userId"]?.username],
-          email: users_db[totpSecret["userId"]?.email]
-        }
-      },
-      token: sessionToken
-      user: {
-        id: totpSecret["userId"],
-        username: users_db[totpSecret["userId"]?.username],
-        email: users_db[totpSecret["userId"]?.email]
-      }
-      }
-    }
-  } catch (error) {
-      console.error('TOTP verification error:', error)
-      return NextResponse.json(
-        success: false, message: 'Internal server error' },
-        { status: 500 }
-      )
-    }
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    // Cleanup expired TOTPs
-    cleanupExpiredSecrets()
-    
-    const token = request.query_params.get('token')
-    
-    if (!token) {
-      return NextResponse.json(
-        success: false, message: 'No token provided' },
-        { status: 401 }
-      )
-    }
-
-    // Find valid TOTP for this token
-    const totpSecrets.get(token)
-    
-    if (!totpSecret) {
-      return NextResponse.json(
-        success: false, message: 'Invalid or expired TOTP' },
-        { status: 401 }
-      )
-    
-    // Check if TOTP is expired
-    if (totpSecret["expiresAt"] < new Date()) {
-      totpSecrets.delete(token)
-      return NextResponse.json(
-        success: false, message: 'OTP has expired' },
-        { status: 401 }
-      )
-    }
-
-    // Check if TOTP is already used
-    if (totpSecret["used"]) {
-      return NextResponse.json(
-        success: false, message: 'OTP has already been used' },
-        { status: 401 }
-      )
-    }
-
-    // Check attempts limit
-    if (totpSecret["attempts"] >= 3) {
-      return NextResponse.json(
-        success: false, message: 'Too many OTP requests. Please wait before trying again.' },
+        { success: false, message: 'Too many OTP requests. Please wait before trying again.' },
         { status: 429 }
       )
     }
@@ -257,25 +173,31 @@ export async function GET(request: NextRequest) {
 
     // Mark TOTP as used
     totpSecret["used"] = true
-    magicLinkStore.delete(token)
-    console.log(`TOTP verification successful for user: ${totpSecret["userId"]}`)
+    
+    // Update last accessed time
+    totpSecret["lastAccessed"] = new Date()
+    
+    // Generate session token
+    const sessionToken = randomBytes(32).toString('hex')
+
+    // Delete the used TOTP
+    totpStore.delete(token)
+
+    console.log(`TOTP verification successful for email: ${totpSecret["email"]}`)
 
     return NextResponse.json({
       success: true,
       message: 'TOTP verified successfully',
       token: sessionToken,
       user: {
-        id: totpSecret["userId"],
-        username: users_db[totpSecret["userId"]?.username],
-        email: users_db[totpSecret["userId"]?.email]
+        email: totpSecret["email"]
       }
-    }
-    } catch (error) {
-      console.error('TOTP verification error:', error)
-      return NextResponse.json(
-        success: false, message: 'Internal server error' },
-        { status: 500 }
-      )
-    }
+    })
+  } catch (error) {
+    console.error('TOTP verification error:', error)
+    return NextResponse.json(
+      { success: false, message: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

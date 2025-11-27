@@ -4,17 +4,17 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { InputOTP } from '@/components/ui/input-otp'
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Smartphone, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Smartphone,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -53,22 +53,22 @@ export default function SMSOTPPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/sms-otp/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           phoneNumber: selectedCountry + phoneNumber,
           country: selectedCountry
         }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         setOtpSent(true)
         startTimer(60) // 60 seconds countdown
@@ -88,23 +88,23 @@ export default function SMSOTPPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/sms-otp/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           phoneNumber: selectedCountry + phoneNumber,
           otp,
           country: selectedCountry
         }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         // Reset form
         setPhoneNumber('')
@@ -527,7 +527,7 @@ async def cleanup_expired_otps(request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -559,7 +559,7 @@ sequenceDiagram
         Server->>Client: 401 Unauthorized
         Client->>User: Show error message
     end
-```
+\`\`\``
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -606,7 +606,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  SMS OTP authentication sends a one-time password via SMS to the user's registered 
+                  SMS OTP authentication sends a one-time password via SMS to the user's registered
                   phone number. The user must provide this OTP within a limited time frame to verify their identity.
                 </p>
               </CardContent>
@@ -662,7 +662,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> SMS OTP should be part of a multi-factor authentication strategy. 
+              <strong>Security Note:</strong> SMS OTP should be part of a multi-factor authentication strategy.
               Always validate phone numbers and implement rate limiting to prevent abuse.
             </AlertDescription>
           </Alert>
@@ -758,8 +758,8 @@ sequenceDiagram
                       />
                     </div>
                   </div>
-                  <Button 
-                    onClick={handleSendOTP} 
+                  <Button
+                    onClick={handleSendOTP}
                     disabled={isLoading || !phoneNumber}
                     className="w-full mt-4"
                   >
@@ -782,8 +782,8 @@ sequenceDiagram
                   <div className="flex items-center justify-between">
                     <Label>Time remaining: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</Label>
                     {timeLeft > 0 && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={handleResendOTP}
                         disabled={isLoading}
@@ -802,14 +802,19 @@ sequenceDiagram
                 <h3 className="font-semibold">Step 2: Verify OTP</h3>
                 <div>
                   <Label htmlFor="otp">6-Digit Code</Label>
-                  <InputOTP
-                    value={otp}
-                    onChange={(value) => setOtp(value)}
-                    maxLength={6}
-                  />
+                  <InputOTP value={otp} onChange={(value) => setOtp(value)} maxLength={6}>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
                 </div>
-                <Button 
-                  onClick={handleVerifyOTP} 
+                <Button
+                  onClick={handleVerifyOTP}
                   disabled={isLoading || !otp || otp.length !== 6}
                   className="w-full"
                 >
@@ -936,7 +941,7 @@ sequenceDiagram
                     Prevention: Phone verification, device fingerprinting
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">SMS Interception</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -946,7 +951,7 @@ sequenceDiagram
                     Prevention: Encrypted messaging, secure channels
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Brute Force</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">

@@ -407,9 +407,9 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         "user_id": token_data["user_id"],
         "username": token_data["username"]
     }
-```
+`
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant Client
     participant Browser
@@ -442,7 +442,7 @@ sequenceDiagram
     TokenStore->>Server: Return validation result
     Server->>Browser: 200 OK + validation result
     Browser->>Client: Display validation status
-```
+  \`\`\``
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

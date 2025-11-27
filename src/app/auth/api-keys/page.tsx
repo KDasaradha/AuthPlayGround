@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 import { 
   Key, 
   AlertTriangle, 
@@ -45,6 +46,7 @@ export default function ApiKeysPage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<{ success: boolean; message: string; data?: any } | null>(null)
+  const [showToken, setShowToken] = useState(false)
 
   const availablePermissions = [
     'read:users',
@@ -535,7 +537,7 @@ async def api_key_cleanup(request: Request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant Client
     participant Browser
@@ -563,7 +565,7 @@ sequenceDiagram
     Server->>ApiKeyStore: Remove API key
     Server->>Browser: 200 OK
     Browser->>Client: Confirm deletion
-```
+\`\`\`;`
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -747,22 +749,26 @@ sequenceDiagram
                   </div>
                   <div>
                     <Label>Permissions</Label>
-                    <Select
-                      value={selectedPermissions.join(',')}
-                      onValueChange={(value) => setSelectedPermissions(value.split(',').filter(p => p))}
-                      multiple
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select permissions" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availablePermissions.map((permission) => (
-                          <SelectItem key={permission} value={permission}>
+                    <div className="grid grid-cols-2 gap-2 mt-2 border rounded-md p-4">
+                      {availablePermissions.map((permission) => (
+                        <div key={permission} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={permission} 
+                            checked={selectedPermissions.includes(permission)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedPermissions([...selectedPermissions, permission])
+                              } else {
+                                setSelectedPermissions(selectedPermissions.filter(p => p !== permission))
+                              }
+                            }}
+                          />
+                          <Label htmlFor={permission} className="text-sm font-normal cursor-pointer">
                             {permission}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   <Button 
                     onClick={handleGenerateKey} 

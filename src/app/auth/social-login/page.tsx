@@ -9,14 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Users, 
-  Check, 
-  X, 
-  User, 
-  Mail, 
-  Globe, 
-  Github, 
+import {
+  Users,
+  Check,
+  X,
+  User,
+  Mail,
+  Globe,
+  Github,
   Chrome,
   Shield,
   ExternalLink,
@@ -36,12 +36,18 @@ import { useToast } from "@/hooks/use-toast"
 export default function SocialLoginPage() {
   const [isConnected, setIsConnected] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState("google")
-  const [userInfo, setUserInfo] = useState(null)
+  const [userInfo, setUserInfo] = useState<{
+    name: string
+    email: string
+    provider: string
+    id: string
+    verified: boolean
+  } | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showApiKey, setShowApiKey] = useState(false)
   const [apiKey, setApiKey] = useState("")
   const [redirectUri, setRedirectUri] = useState("")
-  const [connectedProviders, setConnectedProviders] = useState([])
+  const [connectedProviders, setConnectedProviders] = useState<string[]>([])
   const { toast } = useToast()
 
   const socialProviders = [
@@ -97,16 +103,16 @@ export default function SocialLoginPage() {
 
   const handleConfigureProvider = async () => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/social-login/configure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider: selectedProvider, redirectUri })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setApiKey(data.apiKey)
         toast({
@@ -133,16 +139,16 @@ export default function SocialLoginPage() {
 
   const handleSocialLogin = async (providerId: string) => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/social-login/authenticate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider: providerId })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setUserInfo(data.userInfo)
         setIsConnected(true)
@@ -171,16 +177,16 @@ export default function SocialLoginPage() {
 
   const handleDisconnect = async (providerId: string) => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/social-login/disconnect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider: providerId })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setConnectedProviders(connectedProviders.filter(p => p !== providerId))
         if (connectedProviders.length === 1) {
@@ -211,16 +217,16 @@ export default function SocialLoginPage() {
 
   const handleLinkAccount = async (providerId: string) => {
     setIsProcessing(true)
-    
+
     try {
       const response = await fetch("/api/auth/social-login/link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider: providerId })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setConnectedProviders([...connectedProviders, providerId])
         toast({
@@ -277,7 +283,7 @@ export default function SocialLoginPage() {
                     <TabsTrigger value="configure">Configure</TabsTrigger>
                     <TabsTrigger value="linked">Linked Accounts</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="providers" className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {socialProviders.map((provider) => (
@@ -297,12 +303,12 @@ export default function SocialLoginPage() {
                                 <Badge variant="default">Connected</Badge>
                               )}
                             </div>
-                            
+
                             <div className="space-y-2">
                               <div className="text-sm text-gray-600">
                                 <strong>Scopes:</strong> {provider.scopes.join(", ")}
                               </div>
-                              
+
                               {connectedProviders.includes(provider.id) ? (
                                 <div className="flex gap-2">
                                   <Button
@@ -351,7 +357,7 @@ export default function SocialLoginPage() {
                       ))}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="configure" className="space-y-4">
                     <div className="space-y-4">
                       <div>
@@ -371,7 +377,7 @@ export default function SocialLoginPage() {
                           ))}
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="redirect-uri">Redirect URI</Label>
                         <Input
@@ -381,7 +387,7 @@ export default function SocialLoginPage() {
                           placeholder="https://yourapp.com/auth/callback"
                         />
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="api-key">API Key / Client ID</Label>
                         <div className="flex gap-2">
@@ -402,8 +408,8 @@ export default function SocialLoginPage() {
                           </Button>
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={handleConfigureProvider}
                         disabled={isProcessing}
                         className="w-full"
@@ -420,7 +426,7 @@ export default function SocialLoginPage() {
                           </>
                         )}
                       </Button>
-                      
+
                       {apiKey && (
                         <Alert>
                           <Info className="h-4 w-4" />
@@ -431,7 +437,7 @@ export default function SocialLoginPage() {
                       )}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="linked" className="space-y-4">
                     <div className="space-y-4">
                       {connectedProviders.length === 0 ? (
@@ -445,12 +451,13 @@ export default function SocialLoginPage() {
                         <div className="space-y-3">
                           {connectedProviders.map((providerId) => {
                             const provider = socialProviders.find(p => p.id === providerId)
+                            if (!provider) return null
                             return (
                               <Card key={providerId}>
                                 <CardContent className="pt-6">
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                      <div className={`p-2 rounded-lg bg-gradient-to-r ${provider.color} text-white`}>
+                                      <div className={`p-2 rounded-lg bg-linear-to-r ${provider.color} text-white`}>
                                         {provider.icon}
                                       </div>
                                       <div>
@@ -497,12 +504,12 @@ export default function SocialLoginPage() {
                     {isConnected ? "Connected" : "Disconnected"}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span>Linked Accounts</span>
                   <span className="font-mono">{connectedProviders.length}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span>Primary Provider</span>
                   <span className="font-mono">
@@ -530,9 +537,9 @@ export default function SocialLoginPage() {
                       <p className="text-sm text-gray-500">{userInfo.email}</p>
                     </div>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Provider:</span>
@@ -567,7 +574,7 @@ export default function SocialLoginPage() {
                       <p className="text-sm text-gray-600">Users don't need to remember another password</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -575,7 +582,7 @@ export default function SocialLoginPage() {
                       <p className="text-sm text-gray-600">Leverage provider's security measures</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -583,7 +590,7 @@ export default function SocialLoginPage() {
                       <p className="text-sm text-gray-600">Reduce signup friction significantly</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
                     <div>
@@ -610,14 +617,14 @@ export default function SocialLoginPage() {
                       Always validate the state parameter to prevent CSRF attacks
                     </AlertDescription>
                   </Alert>
-                  
+
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
                       Use HTTPS for all OAuth redirects
                     </AlertDescription>
                   </Alert>
-                  
+
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>

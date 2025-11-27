@@ -524,7 +524,7 @@ async def magic_link_verify_page(request: Request):
         "token": session_token
     }`
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -556,7 +556,7 @@ sequenceDiagram
         Server->>Client: 401 Unauthorized
         Client->>Client: Show error message
     end
-```
+\`\`\``
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
   ArrowRight,
   Code,
   BookOpen,
@@ -50,23 +50,23 @@ export default function PasswordlessPage() {
 
     setIsLoading(true)
     setResult(null)
-    
+
     try {
       const response = await fetch('/api/auth/passwordless/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           identifier,
           method,
           deviceInfo: navigator.userAgent
         }),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         setIsLoggedIn(true)
         setSessionData(data.data)
@@ -80,7 +80,7 @@ export default function PasswordlessPage() {
 
   const handleLogout = async () => {
     setIsLoading(true)
-    
+
     try {
       const response = await fetch('/api/auth/passwordless/logout', {
         method: 'POST',
@@ -89,10 +89,10 @@ export default function PasswordlessPage() {
         },
         body: JSON.stringify({}),
       })
-      
+
       const data = await response.json()
       setResult(data)
-      
+
       if (data.success) {
         setIsLoggedIn(false)
         setSessionData(null)
@@ -531,7 +531,7 @@ async def cleanup_expired_sessions(request, call_next):
         del passwordless_sessions[session_id]
     
     response = await call_next(request)
-    return response`
+    return response
 
 # Device management
 @app.post("/auth/passwordless/register-device")
@@ -579,11 +579,11 @@ def verify_user_credentials(user: dict, identifier: str, method: str) -> bool:
     return False
 
 # Mock trusted devices storage
-trusted_devices = {}`
+trusted_devices = {}
 
 def is_trusted_device(device_id: str) -> bool:
     """Check if device is trusted"""
-    return trusted_devices.get(device_id, {}).get("trusted", False)`
+    return trusted_devices.get(device_id, {}).get("trusted", False)
 
 def get_device_info_from_request(request: Request) -> Optional[dict]:
     """Extract device information from request"""
@@ -605,9 +605,9 @@ def get_device_info_from_request(request: Request) -> Optional[dict]:
         "trusted": is_trusted_device(device_fingerprint),
         "last_seen": datetime.utcnow()
     }
-}`
+}`;
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -641,7 +641,7 @@ sequenceDiagram
     Server->>Client: 200 OK
     Client->>Client: Clear auth token
     end
-```
+\`\`\`\``;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -688,7 +688,7 @@ sequenceDiagram
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Passwordless authentication allows users to sign in without passwords using various identifiers 
+                  Passwordless authentication allows users to sign in without passwords using various identifiers
                   like email, phone number, device ID, or biometric data.
                 </p>
               </CardContent>
@@ -744,7 +744,7 @@ sequenceDiagram
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Note:</strong> Passwordless authentication should be combined with device trust management 
+              <strong>Security Note:</strong> Passwordless authentication should be combined with device trust management
               and rate limiting to prevent abuse while maintaining user convenience.
             </AlertDescription>
           </Alert>
@@ -828,26 +828,26 @@ sequenceDiagram
                       </SelectContent>
                     </Select>
                   </div>
-                  </div>
-                  <div>
-                    <Label>Identifier</Label>
-                    <Input
-                      type="text"
-                      value={identifier}
-                      onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder={getIdentifierPlaceholder()}
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleLogin} 
-                    disabled={isLoading || !identifier}
-                    className="w-full"
-                  >
-                    {isLoading ? 'Authenticating...' : 'Login'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
                 </div>
+                <div>
+                  <Label>Identifier</Label>
+                  <Input
+                    type="text"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder={getIdentifierPlaceholder()}
+                  />
+                </div>
+                <Button
+                  onClick={handleLogin}
+                  disabled={isLoading || !identifier}
+                  className="w-full"
+                >
+                  {isLoading ? 'Authenticating...' : 'Login'}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
+
 
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded-lg">
@@ -860,7 +860,7 @@ sequenceDiagram
                         <p className="text-sm text-green-600">
                           User: {sessionData?.user?.username}
                         </p>
-                        <Button 
+                        <Button
                           onClick={handleLogout}
                           variant="outline"
                           size="sm"
@@ -897,15 +897,15 @@ sequenceDiagram
                           <div className="mt-2 text-sm">
                             <strong>Session ID:</strong> {result.data?.sessionId?.substring(0, 8)}...
                             <strong>Expires:</strong> {new Date(result.data?.expiresAt).toLocaleString()}
-                          <strong>User:</strong> {result.data?.user?.username}
-                          <strong>Method:</strong> {method}
-                        </div>
+                            <strong>User:</strong> {result.data?.user?.username}
+                            <strong>Method:</strong> {method}
+                          </div>
                         )}
                       </AlertDescription>
                     </div>
-                  </div>
-                </div>
-              )}
+                  </Alert>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1014,7 +1014,7 @@ sequenceDiagram
                     Prevention: Email verification, domain validation, monitoring
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                   <h4 className="font-semibold mb-2">Device Cloning</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -1024,7 +1024,7 @@ sequenceDiagram
                     Prevention: Device fingerprinting, trusted devices, behavioral analysis
                   </p>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950">
                   <h4 className="font-semibold mb-2">Session Hijacking</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">

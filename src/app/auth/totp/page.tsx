@@ -363,7 +363,7 @@ async def cleanup_expired_totps(request, call_next):
     response = await call_next(request)
     return response`
 
-  const flowDiagram = ```mermaid
+  const flowDiagram = `\`\`\`mermaid
 sequenceDiagram
     participant User
     participant Client
@@ -395,7 +395,7 @@ sequenceDiagram
         Server->>Client: 401 Unauthorized
         Client->>User: Show error
     end
-```
+\`\`\``
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

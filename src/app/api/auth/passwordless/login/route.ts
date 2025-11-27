@@ -51,13 +51,13 @@ function isValidIdentifier(identifier: string, method: string): boolean {
   } else if (method === 'phone') {
     // Phone number validation
     const cleaned = identifier.replace(/\D/g, '')
-    return 10 <= cleaned.length <= 15 && /^\d+$/.test(cleaned)
+    return cleaned.length >= 10 && cleaned.length <= 15 && /^\d+$/.test(cleaned)
   } else if (method === 'username') {
     // Username validation
-    return len(identifier) >= 3 && len(identifier) <= 50
+    return identifier.length >= 3 && identifier.length <= 50
   } else if (method === 'device') {
     // Device ID validation
-    return len(identifier) >= 8 && len(identifier) <= 64
+    return identifier.length >= 8 && identifier.length <= 64
   }
   return false
 }
@@ -77,7 +77,6 @@ function getUserByIdentifier(identifier: string, method: string) {
     }
   } else if (method === 'username') {
     return users[identifier]
-  }
   }
   return null
 }
@@ -117,7 +116,7 @@ export async function POST(request: NextRequest) {
     if (!isValidIdentifier(identifier, method)) {
       return NextResponse.json(
         { success: false, message: `Invalid ${method} format` },
-        { { status: 400 }
+        { status: 400 }
       )
     }
 
