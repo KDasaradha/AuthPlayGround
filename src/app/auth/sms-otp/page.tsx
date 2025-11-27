@@ -25,6 +25,7 @@ import {
   Clock
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import BackButton from '@/components/ui/back-button'
 
 export default function SMSOTPPage() {
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -563,6 +564,9 @@ sequenceDiagram
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="mb-6">
+        <BackButton />
+      </div>
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">

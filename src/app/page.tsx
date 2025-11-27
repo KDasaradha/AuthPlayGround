@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -386,14 +387,18 @@ function getCategoryColor(category: string) {
 }
 
 // Component for expandable card details
-function ExpandableCard({ item, type }: { item: any, type: string }) {
+function ExpandableCard({ item, type, onItemClick }: { item: any, type: string, onItemClick: (id: string) => void }) {
   const [expanded, setExpanded] = useState(false)
   const IconComponent = item.icon
-  const href = type === 'auth' ? `/auth/${item.id}` : `/authz/${item.id}`
+
+  // Modified to use onClick handler instead of direct navigation
+  const handleCardClick = () => {
+    onItemClick(item.id)
+  }
 
   return (
     <Card className="group cursor-pointer transition-all duration-300 hover:shadow-xl border-2 hover:border-primary/30 overflow-hidden h-full flex flex-col">
-      <Link href={href} className="flex flex-col h-full">
+      <div onClick={handleCardClick} className="flex flex-col h-full">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between mb-3">
             <div className={`p-3 rounded-xl ${item.color} text-white group-hover:scale-110 transition-transform shadow-lg`}>
@@ -434,6 +439,7 @@ function ExpandableCard({ item, type }: { item: any, type: string }) {
                 className="p-0 h-auto text-slate-500 hover:bg-transparent"
                 onClick={(e) => {
                   e.preventDefault()
+                  e.stopPropagation()
                   setExpanded(!expanded)
                 }}
               >
@@ -442,7 +448,7 @@ function ExpandableCard({ item, type }: { item: any, type: string }) {
             </div>
           </div>
         </CardContent>
-      </Link>
+      </div>
 
       {expanded && (
         <div className="px-6 pb-4 border-t bg-slate-50 dark:bg-slate-800/50">
@@ -659,6 +665,11 @@ function ComparisonModal({ isOpen, onClose, items }: { isOpen: boolean, onClose:
 }
 
 export default function Home() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'auth')
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
+
   const [authSearchTerm, setAuthSearchTerm] = useState('')
   const [authzSearchTerm, setAuthzSearchTerm] = useState('')
   const [authDifficultyFilter, setAuthDifficultyFilter] = useState('all')
@@ -671,6 +682,25 @@ export default function Home() {
   // Extract unique categories
   const authCategories = Array.from(new Set(authMethods.map(method => method.category)))
   const authzCategories = Array.from(new Set(authzModels.map(model => model.category)))
+
+  // Handle tab change and update URL
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    const params = new URLSearchParams(searchParams)
+    params.set('tab', value)
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  // Handle item click
+  const handleItemClick = (itemId: string) => {
+    setSelectedItemId(itemId)
+    // Navigate to the appropriate page with the item ID as a parameter
+    if (activeTab === 'auth') {
+      router.push(`/auth/${itemId}`, { scroll: false })
+    } else {
+      router.push(`/authz/${itemId}`, { scroll: false })
+    }
+  }
 
   const filteredAuthMethods = authMethods.filter(method => {
     const matchesSearch = method.title.toLowerCase().includes(authSearchTerm.toLowerCase()) ||
@@ -755,7 +785,7 @@ export default function Home() {
           </section>
 
           {/* Main Content with Tabs */}
-          <Tabs defaultValue="auth" className="mb-16">
+          <Tabs defaultValue={activeTab} onValueChange={handleTabChange} className="mb-16">
             <TabsList className="grid w-full grid-cols-2 mb-8 h-12">
               <TabsTrigger value="auth" className="text-base">
                 <LockKeyhole className="mr-2 h-4 w-4" />
@@ -790,7 +820,7 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredAuthMethods.map((method) => (
-                  <ExpandableCard key={method.id} item={method} type="auth" />
+                  <ExpandableCard key={method.id} item={method} type="auth" onItemClick={handleItemClick} />
                 ))}
               </div>
 
@@ -837,7 +867,7 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredAuthzModels.map((model) => (
-                  <ExpandableCard key={model.id} item={model} type="authz" />
+                  <ExpandableCard key={model.id} item={model} type="authz" onItemClick={handleItemClick} />
                 ))}
               </div>
 

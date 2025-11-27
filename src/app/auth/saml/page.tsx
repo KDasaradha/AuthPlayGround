@@ -32,6 +32,7 @@ import {
   UserCheck
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import BackButton from "@/components/ui/back-button"
 
 export default function SAMLPage() {
   const [isConfigured, setIsConfigured] = useState(false)
@@ -296,6 +297,9 @@ export default function SAMLPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-8">
           <div className="flex justify-center items-center gap-3 mb-4">
             <Building className="h-12 w-12 text-blue-600" />
